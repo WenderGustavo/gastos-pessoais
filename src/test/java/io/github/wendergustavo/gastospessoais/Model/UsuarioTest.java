@@ -1,7 +1,7 @@
 package io.github.wendergustavo.gastospessoais.Model;
 
-
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UsuarioTest {
 
     @Test
@@ -11,9 +11,9 @@ public class UsuarioTest {
         usuario.setEmail("nem12@gmail.com");
         usuario.setSenha("nem123");
 
-        assert usuario.getNome().equals("Wender");
-        assert usuario.getEmail().equals("nem12@gmail.com");
-        assert usuario.getSenha().equals("nem123");
+        assertEquals("Wender",usuario.getNome());
+        assertEquals("nem12@gmail.com",usuario.getEmail());
+        assertEquals("nem123",usuario.getSenha());
 
     }
 
