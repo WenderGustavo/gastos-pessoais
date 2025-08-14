@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,5 +27,7 @@ public class Usuario {
     @Column(name = "senha",length =(250), nullable = false)
     private String senha;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<Gasto> gastos;
 
 }
