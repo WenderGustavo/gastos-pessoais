@@ -2,24 +2,20 @@ package io.github.wendergustavo.gastospessoais.Model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class Gasto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    private UUID uuid;
+    private UUID id;
 
     @Column(name = "descricao", length = (150), nullable = false)
     private String descricao;
