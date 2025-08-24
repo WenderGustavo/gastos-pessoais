@@ -2,14 +2,16 @@ package io.github.wendergustavo.gastospessoais.Model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Usuario {
 
