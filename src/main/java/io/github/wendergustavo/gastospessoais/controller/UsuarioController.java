@@ -1,8 +1,8 @@
-package io.github.wendergustavo.gastospessoais.Controller;
+package io.github.wendergustavo.gastospessoais.controller;
 
 
-import io.github.wendergustavo.gastospessoais.Model.Usuario;
-import io.github.wendergustavo.gastospessoais.Service.UsuarioService;
+import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

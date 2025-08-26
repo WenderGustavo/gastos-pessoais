@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.Configuration;
+package io.github.wendergustavo.gastospessoais.configuration;
 
 
 

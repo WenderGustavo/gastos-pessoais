@@ -1,7 +1,7 @@
-package io.github.wendergustavo.gastospessoais.Service;
+package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.Model.Usuario;
-import io.github.wendergustavo.gastospessoais.Repository.UsuarioRepository;
+import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

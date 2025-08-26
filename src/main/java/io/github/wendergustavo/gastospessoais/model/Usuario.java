@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.Model;
+package io.github.wendergustavo.gastospessoais.model;
 
 
 import jakarta.persistence.*;
