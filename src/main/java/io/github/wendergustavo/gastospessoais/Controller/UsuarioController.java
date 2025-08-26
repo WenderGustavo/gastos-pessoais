@@ -5,8 +5,7 @@ import io.github.wendergustavo.gastospessoais.Model.Usuario;
 import io.github.wendergustavo.gastospessoais.Service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -15,7 +14,8 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    public ResponseEntity<Void> salvarUsuario(Usuario usuario){
+    @PostMapping
+    public ResponseEntity<Void> salvarUsuario(@RequestBody Usuario usuario){
         usuarioService.salvar(usuario);
         return ResponseEntity.ok().build();
     }
