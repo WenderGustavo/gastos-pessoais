@@ -23,7 +23,7 @@ public class Gasto {
     @Column(name = "valor",precision = 6,scale = 2, nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "data_gasto", nullable = false)
+    @Column(name = "data_gasto")
     private LocalDate dataGasto;
 
     @ManyToOne
