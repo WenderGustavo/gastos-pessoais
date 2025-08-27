@@ -5,6 +5,9 @@ import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
@@ -14,4 +17,18 @@ public class UsuarioService {
     public Usuario salvar(Usuario usuario){
         return usuarioRepository.save(usuario);
     }
+
+    public Optional<Usuario> buscarPorId(UUID id){
+        return usuarioRepository.findById(id);
+    }
+
+    public void deletar(UUID id){
+        usuarioRepository.deleteById(id);
+    }
+
+    public void atualizar(Usuario usuario){
+        usuarioRepository.save(usuario);
+    }
+
+
 }
