@@ -2,6 +2,7 @@ package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
+import io.github.wendergustavo.gastospessoais.validador.UsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,11 @@ import java.util.UUID;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioValidator usuarioValidator;
+
 
     public Usuario salvar(Usuario usuario){
+        usuarioValidator.validar(usuario);
         return usuarioRepository.save(usuario);
     }
 
@@ -27,6 +31,7 @@ public class UsuarioService {
     }
 
     public void atualizar(Usuario usuario){
+        usuarioValidator.validar(usuario);
         usuarioRepository.save(usuario);
     }
 
