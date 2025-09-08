@@ -1,5 +1,6 @@
 package io.github.wendergustavo.gastospessoais.service;
 
+import io.github.wendergustavo.gastospessoais.exceptions.ResourceNotFoundException;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import io.github.wendergustavo.gastospessoais.validador.UsuarioValidator;
@@ -23,10 +24,20 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> buscarPorId(UUID id){
+
+        if(id == null){
+            throw new ResourceNotFoundException("Usuario não encontrado");
+        }
+
         return usuarioRepository.findById(id);
     }
 
     public void deletar(UUID id){
+
+        if(id == null){
+            throw  new ResourceNotFoundException("Usuario não encontrado");
+        }
+
         usuarioRepository.deleteById(id);
     }
 
