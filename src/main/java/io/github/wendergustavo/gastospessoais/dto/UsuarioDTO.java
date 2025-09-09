@@ -13,7 +13,7 @@ public record UsuarioDTO(
 
         UUID id,
 
-        @NotNull(message = "Campo obrigatorio")
+        @NotNull(message = "Campo obrigatorio.")
         @Size(min = 3, max = 100, message = "Campo fora do tamanho padrao.")
         String nome,
 
@@ -21,8 +21,8 @@ public record UsuarioDTO(
         @Email(message = "Email invalido.")
         String email,
 
-        @NotNull(message = "Campo obrigatorio")
+        @NotNull(message = "Campo obrigatorio.")
         String senha,
 
-        List<Gasto> gastos) {
+        List<Gasto> gastos){
 }
