@@ -1,4 +1,9 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-public record UsuarioResponseDTO() {
+public record UsuarioResponseDTO(
+
+        String nome,
+        String email
+
+) {
 }
