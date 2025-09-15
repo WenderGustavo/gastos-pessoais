@@ -3,6 +3,7 @@ package io.github.wendergustavo.gastospessoais.controller;
 
 import io.github.wendergustavo.gastospessoais.controller.mappers.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -30,11 +31,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> buscarPorId(@PathVariable("id") UUID id){
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") UUID id){
 
         return usuarioService.buscarPorId(id)
                 .map(usuario -> {
-                    UsuarioDTO usuarioResponseDTO = mapper.toDTO(usuario);
+                    UsuarioResponseDTO usuarioResponseDTO = mapper.toResponseDTO(usuario);
                     return ResponseEntity.ok(usuarioResponseDTO);
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
