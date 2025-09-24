@@ -1,12 +1,11 @@
 package io.github.wendergustavo.gastospessoais.validador;
 
 
-import io.github.wendergustavo.gastospessoais.exceptions.EmailAlreadyExistsException;
+import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -19,20 +18,16 @@ public class UsuarioValidator {
     }
 
     public void validar(Usuario usuario){
-        validarEmail(usuario.getEmail(), usuario.getId());
+
+        if(validarEmail(usuario.getEmail(),usuario.getId())){
+            throw new RegistroDuplicadoException("Email already in use.");
+        }
     }
 
-    public void validarEmail(String email, UUID id){
-
-        Optional<Usuario> usuario = repository.findByEmail(email);
-
-        if(usuario.isPresent()){
-            if (id == null || !id.equals(usuario.get().getId())){
-                throw new EmailAlreadyExistsException("Email ja em uso!");
-            }
-        }
-
-
+    public boolean validarEmail(String email, UUID id) {
+        return repository.findByEmail(email)
+                .map(u -> id == null && !id.equals(u.getId()))
+                .orElse(false);
     }
 
 
