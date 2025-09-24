@@ -26,7 +26,7 @@ public class UsuarioValidator {
 
     public boolean validarEmail(String email, UUID id) {
         return repository.findByEmail(email)
-                .map(u -> id == null && !id.equals(u.getId()))
+                .map(u -> id == null || !id.equals(u.getId()))
                 .orElse(false);
     }
 
