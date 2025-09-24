@@ -17,14 +17,18 @@ public class Gasto {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "descricao", length = (150), nullable = false)
-    private String descricao;
+    @Column(name = "description", length = (150))
+    private String description;
 
-    @Column(name = "valor",precision = 6,scale = 2, nullable = false)
-    private BigDecimal valor;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "spent_Type",nullable = false)
+    private GastoTipo spentType;
 
-    @Column(name = "data_gasto")
-    private LocalDate dataGasto;
+    @Column(name = "value",precision = 6,scale = 2, nullable = false)
+    private BigDecimal value;
+
+    @Column(name = "spent_date")
+    private LocalDate spentDate;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
