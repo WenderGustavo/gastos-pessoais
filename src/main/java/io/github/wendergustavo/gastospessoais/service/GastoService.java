@@ -18,4 +18,13 @@ public class GastoService {
 
         return repository.save(gasto);
     }
+
+    public Optional<Gasto> buscarPorId(UUID id){
+
+        if(id == null){
+            throw new CampoInvalidoException("Gasto not found.");
+        }
+
+        return repository.findById(id);
+    }
 }
