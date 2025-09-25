@@ -4,11 +4,13 @@ import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
+@Component
 public class GastoValidator {
 
     private final UsuarioRepository usuarioRepository;
