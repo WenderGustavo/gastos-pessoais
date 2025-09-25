@@ -1,4 +1,17 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-public record ResultadoDaPesquisaDTO() {
+import io.github.wendergustavo.gastospessoais.model.GastoTipo;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public record ResultadoPesquisaDTO(
+
+        String descricao,
+        GastoTipo gastoTipo,
+        BigDecimal valor,
+        LocalDate dataGasto,
+        UsuarioResponseDTO usuario
+
+) {
 }
