@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GastoService {
 
-    private GastoRepository repository;
+    private final GastoRepository repository;
+    private final GastoValidator validator;
 
     public Gasto salvar(Gasto gasto){
 

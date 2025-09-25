@@ -4,18 +4,16 @@ package io.github.wendergustavo.gastospessoais.validador;
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class UsuarioValidator {
 
     private final UsuarioRepository repository;
-
-    public UsuarioValidator(UsuarioRepository usuarioRepository) {
-        this.repository = usuarioRepository;
-    }
 
     public void validar(Usuario usuario){
 
