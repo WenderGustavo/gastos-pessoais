@@ -1,4 +1,34 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-public record CadastrarGastoDTO() {
+import io.github.wendergustavo.gastospessoais.model.GastoTipo;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
+
+public record CadastrarGastoDTO(
+
+        UUID uuid,
+
+        @Size(min = 0, max = 150)
+        String descricao,
+
+        @NotNull(message = "Campo obrigatorio")
+        GastoTipo gastoTipo,
+
+        @NotNull(message = "Campo obrigatorio")
+        BigDecimal valor,
+
+        @Future(message = "A data não pode ser uma data futura")
+        LocalDate dataGasto,
+
+        @NotNull(message = "campo obrigatorio")
+        UUID idUsuario
+
+
+
+) {
 }
