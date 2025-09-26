@@ -1,5 +1,20 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
+
+import io.github.wendergustavo.gastospessoais.controller.mappers.GastoMapper;
+import io.github.wendergustavo.gastospessoais.dto.ResultadoPesquisaDTO;
+import io.github.wendergustavo.gastospessoais.model.Gasto;
+import io.github.wendergustavo.gastospessoais.service.GastoService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/gastos")
+@RequiredArgsConstructor
 public class GastoController {
 
     private final GastoService gastoService;
@@ -23,3 +38,6 @@ public class GastoController {
                     return ResponseEntity.ok(resultadoPesquisaDTO);
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    }
+
