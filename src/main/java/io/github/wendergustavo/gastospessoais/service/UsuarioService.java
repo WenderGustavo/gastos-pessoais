@@ -46,5 +46,9 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    public boolean possuiGasto(Usuario usuario){
+        return gastoRepository.existsByUsuario(usuario);
+    }
+
 
 }
