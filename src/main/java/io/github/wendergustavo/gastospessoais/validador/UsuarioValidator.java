@@ -1,6 +1,7 @@
 package io.github.wendergustavo.gastospessoais.validador;
 
 
+import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
@@ -17,15 +18,24 @@ public class UsuarioValidator {
 
     public void validar(Usuario usuario){
 
-        if(validarEmail(usuario.getEmail(),usuario.getId())){
+        if(emailJaExiste(usuario.getEmail(),usuario.getId())){
             throw new RegistroDuplicadoException("Email already in use.");
+        }
+
+        if (!senhaValida(usuario.getSenha())) {
+            throw new CampoInvalidoException("Password must be between 8 and 128 characters.");
         }
     }
 
-    public boolean validarEmail(String email, UUID id) {
+    public boolean emailJaExiste(String email, UUID id) {
         return repository.findByEmail(email)
                 .map(u -> id == null || !id.equals(u.getId()))
                 .orElse(false);
+    }
+
+    public boolean senhaValida(String senha){
+        return senha != null && !senha.isBlank()
+                && senha.length() >= 8 && senha.length() <= 128;
     }
 
 
