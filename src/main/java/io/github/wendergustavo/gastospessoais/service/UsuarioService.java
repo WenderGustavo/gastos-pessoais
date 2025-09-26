@@ -42,6 +42,11 @@ public class UsuarioService {
     }
 
     public void atualizar(Usuario usuario){
+
+        if(usuario.getId() == null){
+            throw  new IllegalArgumentException("Para atualizar é necessario que o Usuario ja esteja cadastrado.");
+        }
+
         usuarioValidator.validar(usuario);
         usuarioRepository.save(usuario);
     }
