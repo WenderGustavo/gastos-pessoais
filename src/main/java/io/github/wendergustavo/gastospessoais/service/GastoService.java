@@ -27,4 +27,16 @@ public class GastoService {
 
         return repository.findById(id);
     }
+
+    @Transactional
+    public void deletar(Gasto gasto){
+
+        if(gasto.getId() == null){
+            throw new IllegalArgumentException("Gasto ID must not be null.");
+        }
+
+        gastoRepository.delete(gasto);
+    }
+
+
 }
