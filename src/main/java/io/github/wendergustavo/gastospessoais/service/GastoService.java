@@ -38,5 +38,21 @@ public class GastoService {
         gastoRepository.delete(gasto);
     }
 
+    @Transactional
+    public void atualizar(Gasto gasto){
+
+        if(gasto.getId() == null){
+            throw  new IllegalArgumentException("Para atualizar é necessario que o Gasto ja esteja cadastrado.");
+        }
+
+        if (gasto.getDataGasto() == null) {
+            gasto.setDataGasto(LocalDate.now());
+        }
+
+        gastoValidator.validarGasto(gasto);
+        gastoRepository.save(gasto);
+
+    }
+
 
 }
