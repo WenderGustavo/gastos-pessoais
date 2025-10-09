@@ -31,9 +31,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") UUID id){
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") String id){
 
-        return usuarioService.buscarPorId(id)
+        var idUsuario = UUID.fromString(id);
+
+        return usuarioService.buscarPorId(idUsuario)
                 .map(usuario -> {
                     UsuarioResponseDTO usuarioResponseDTO = mapper.toResponseDTO(usuario);
                     return ResponseEntity.ok(usuarioResponseDTO);
@@ -41,21 +43,25 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable("id") UUID id){
+    public ResponseEntity<Void> deletar(@PathVariable("id") String id){
 
-        Optional<Usuario> usuarioOptional = usuarioService.buscarPorId(id);
+        var idUsuario = UUID.fromString(id);
+
+        Optional<Usuario> usuarioOptional = usuarioService.buscarPorId(idUsuario);
 
         if(usuarioOptional.isEmpty()){
             return ResponseEntity.notFound().build();
         }
 
-        usuarioService.deletar(id);
+        usuarioService.deletar(usuarioOptional.get());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@PathVariable UUID id, @RequestBody @Valid UsuarioDTO dto) {
-        return usuarioService.buscarPorId(id)
+    public ResponseEntity<Void> atualizar(@PathVariable String id, @RequestBody @Valid UsuarioDTO dto) {
+
+        var idUsuario = UUID.fromString(id);
+        return usuarioService.buscarPorId(idUsuario)
                 .map(usuario -> {
                     usuario.setNome(dto.nome());
                     usuario.setEmail(dto.email());
