@@ -32,10 +32,10 @@ public class GastoController {
     @GetMapping("/{id}")
     public ResponseEntity<ResultadoPesquisaDTO> buscarPorID(@PathVariable("id") UUID id){
 
-        return gastoService.buscarPorId(id)
-                .map(usuario -> {
-                    var resultadoPesquisaDTO = mapper.toDTO(usuario);
-                    return ResponseEntity.ok(resultadoPesquisaDTO);
+        return gastoService.buscarPorId(UUID.fromString(id))
+                .map(gasto -> {
+                    var gastoResponseDTO = mapper.toDTO(gasto);
+                    return ResponseEntity.ok(gastoResponseDTO);
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
