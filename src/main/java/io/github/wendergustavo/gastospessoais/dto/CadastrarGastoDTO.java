@@ -22,7 +22,7 @@ public record CadastrarGastoDTO(
         @NotNull(message = "Campo obrigatorio")
         BigDecimal valor,
 
-        @Future(message = "A data não pode ser uma data futura")
+        @PastOrPresent(message = "A data não pode ser uma data futura")
         LocalDate dataGasto,
 
         @NotNull(message = "campo obrigatorio")
