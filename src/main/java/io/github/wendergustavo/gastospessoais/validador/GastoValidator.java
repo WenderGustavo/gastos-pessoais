@@ -39,7 +39,7 @@ public class GastoValidator {
         if (gasto.getUsuario() == null || gasto.getUsuario().getId() == null) {
             return false;
         }
-        return usuarioRepository.findById(gasto.getUsuario().getId()).isPresent();
+        return usuarioRepository.existsById(gasto.getUsuario().getId());
     }
 
     private boolean validarData(Gasto gasto) {
