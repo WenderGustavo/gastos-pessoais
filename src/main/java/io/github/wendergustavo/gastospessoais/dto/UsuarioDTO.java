@@ -22,7 +22,8 @@ public record UsuarioDTO(
         String email,
 
         @NotNull(message = "Campo obrigatorio.")
-        String senha,
+        @Size(min = 8, max = 128, message = "Campo fora do tamanho padrao.")
+        String senha
 
         List<Gasto> gastos){
 }
