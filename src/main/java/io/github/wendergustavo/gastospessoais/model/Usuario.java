@@ -28,7 +28,7 @@ public class Usuario {
     @Column(name = "email",nullable = false,length =(250), unique = true)
     private String email;
 
-    @Column(name = "senha",length =(250), nullable = false)
+    @Column(name = "senha",length =(128), nullable = false)
     private String senha;
 
     @OneToMany(mappedBy = "usuario")

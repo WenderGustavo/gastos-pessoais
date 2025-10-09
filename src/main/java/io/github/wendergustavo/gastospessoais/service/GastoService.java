@@ -3,29 +3,39 @@ package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
+import io.github.wendergustavo.gastospessoais.validador.GastoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class GastoService {
 
-    private final GastoRepository repository;
-    private final GastoValidator validator;
+    private final GastoRepository gastoRepository;
+    private final GastoValidator gastoValidator;
 
+    @Transactional
     public Gasto salvar(Gasto gasto){
 
-
-        return repository.save(gasto);
+        if (gasto.getDataGasto() == null) {
+            gasto.setDataGasto(LocalDate.now());
+        }
+        gastoValidator.validarGasto(gasto);
+        return gastoRepository.save(gasto);
     }
 
     public Optional<Gasto> buscarPorId(UUID id){
 
         if(id == null){
-            throw new CampoInvalidoException("Gasto not found.");
+            throw new IllegalArgumentException("Gasto not found.");
         }
 
-        return repository.findById(id);
+        return gastoRepository.findById(id);
     }
 
     @Transactional

@@ -1,11 +1,13 @@
 package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.exceptions.ResourceNotFoundException;
+import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import io.github.wendergustavo.gastospessoais.validador.UsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -16,8 +18,10 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioValidator usuarioValidator;
+    private final GastoRepository gastoRepository;
 
 
+    @Transactional
     public Usuario salvar(Usuario usuario){
         usuarioValidator.validar(usuario);
         return usuarioRepository.save(usuario);
@@ -43,9 +47,10 @@ public class UsuarioService {
             throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
         }
 
-        usuarioRepository.deleteById(id);
+        usuarioRepository.delete(usuario);
     }
 
+    @Transactional
     public void atualizar(Usuario usuario){
 
         if(usuario.getId() == null){

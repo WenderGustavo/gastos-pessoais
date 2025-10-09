@@ -1,12 +1,10 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-import io.github.wendergustavo.gastospessoais.model.Gasto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
 import java.util.UUID;
 
 public record UsuarioDTO(
@@ -24,6 +22,5 @@ public record UsuarioDTO(
         @NotNull(message = "Campo obrigatorio.")
         @Size(min = 8, max = 128, message = "Campo fora do tamanho padrao.")
         String senha
-
-        List<Gasto> gastos){
+){
 }

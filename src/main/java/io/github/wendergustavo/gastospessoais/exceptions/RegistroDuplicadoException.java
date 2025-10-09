@@ -1,8 +1,8 @@
 package io.github.wendergustavo.gastospessoais.exceptions;
 
-public class RegistroDuplicado extends RuntimeException {
+public class RegistroDuplicadoException extends RuntimeException {
 
-    public RegistroDuplicado(String message) {
+    public RegistroDuplicadoException(String message) {
         super(message);
     }
 

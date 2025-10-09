@@ -1,10 +1,8 @@
 package io.github.wendergustavo.gastospessoais.exceptions;
 
+public class CampoInvalidoException extends RuntimeException {
 
-
-public class ResourceNotFoundException extends RuntimeException {
-
-    public ResourceNotFoundException(String message) {
+    public CampoInvalidoException(String message) {
         super(message);
     }
 }

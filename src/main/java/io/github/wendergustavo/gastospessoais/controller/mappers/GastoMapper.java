@@ -1,7 +1,7 @@
 package io.github.wendergustavo.gastospessoais.controller.mappers;
 
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.ResultadoPesquisaDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import org.mapstruct.Mapper;
@@ -19,5 +19,5 @@ public abstract class GastoMapper
      @Mapping(target = "gastoTipo", source = "gastoTipo")
      public abstract Gasto toEntity(CadastrarGastoDTO dto);
 
-     public abstract ResultadoPesquisaDTO toDTO(Gasto gasto);
+     public abstract GastoResponseDTO toDTO(Gasto gasto);
 }
