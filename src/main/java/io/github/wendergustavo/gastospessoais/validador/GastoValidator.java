@@ -42,13 +42,7 @@ public class GastoValidator {
         return usuarioRepository.existsById(gasto.getUsuario().getId());
     }
 
-    private boolean validarData(Gasto gasto) {
-        if (gasto.getDataGasto() == null) {
-            gasto.setDataGasto(LocalDate.now());
-            return true;
-        }
-        return !gasto.getDataGasto().isAfter(LocalDate.now());
+    private boolean dataValida(Gasto gasto) {
+        return gasto.getDataGasto() != null && !gasto.getDataGasto().isAfter(LocalDate.now());
     }
-
-
 }
