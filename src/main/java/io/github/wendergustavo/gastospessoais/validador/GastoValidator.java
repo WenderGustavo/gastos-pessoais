@@ -35,7 +35,7 @@ public class GastoValidator {
         return gasto != null && gasto.getValor() != null && gasto.getValor().compareTo(BigDecimal.ZERO) > 0;
     }
 
-    public boolean validarUsuarioExistente(Gasto gasto) {
+    private boolean validarUsuarioExistente(Gasto gasto) {
         if (gasto.getUsuario() == null || gasto.getUsuario().getId() == null) {
             return false;
         }
