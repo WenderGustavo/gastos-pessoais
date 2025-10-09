@@ -34,8 +34,8 @@ public class UsuarioService {
 
     public void deletar(UUID id){
 
-        if(id == null){
-            throw  new ResourceNotFoundException("Usuario não encontrado");
+        if(possuiGasto(usuario)){
+            throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
         }
 
         usuarioRepository.deleteById(id);
