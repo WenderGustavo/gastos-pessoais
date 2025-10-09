@@ -32,7 +32,7 @@ public class GastoValidator {
     }
 
     private boolean validarValorPositivo(Gasto gasto) {
-        return gasto.getValor() != null && gasto.getValor().compareTo(BigDecimal.ZERO) > 0;
+        return gasto != null && gasto.getValor() != null && gasto.getValor().compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean validarUsuarioExistente(Gasto gasto) {
