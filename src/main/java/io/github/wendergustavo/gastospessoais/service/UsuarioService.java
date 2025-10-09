@@ -32,7 +32,12 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
-    public void deletar(UUID id){
+    @Transactional
+    public void deletar(Usuario usuario){
+
+        if(usuario.getId() == null){
+            throw new IllegalArgumentException("User ID must not be null.");
+        }
 
         if(possuiGasto(usuario)){
             throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
