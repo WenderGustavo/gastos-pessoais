@@ -37,5 +37,24 @@ public class GastoController {
                     return ResponseEntity.ok(gastoResponseDTO);
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> atualizar(@PathVariable("id")  String id, @RequestBody @Valid AtualizarGastoDTO dto) {
+
+        var idGasto = UUID.fromString(id);
+        return gastoService.buscarPorId(idGasto)
+                .map(gasto -> {
+                    gasto.setDescricao(dto.descricao());
+                    gasto.setGastoTipo(dto.gastoTipo());
+                    gasto.setValor(dto.valor());
+                    gasto.setDataGasto(dto.dataGasto());
+                    gastoService.atualizar(gasto);
+                    return ResponseEntity.ok().<Void>build();
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
     }
 
