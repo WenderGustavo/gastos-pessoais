@@ -26,7 +26,7 @@ public class UsuarioService {
     public Optional<Usuario> buscarPorId(UUID id){
 
         if(id == null){
-            throw new ResourceNotFoundException("Usuario não encontrado");
+            throw new IllegalArgumentException("User ID must not be null.");
         }
 
         return usuarioRepository.findById(id);
