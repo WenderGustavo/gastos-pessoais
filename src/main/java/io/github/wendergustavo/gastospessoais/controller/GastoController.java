@@ -54,6 +54,20 @@ public class GastoController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable("id") String id){
+        var idGasto = UUID.fromString(id);
+
+        Optional<Gasto> gastoOptional = gastoService.buscarPorId(idGasto);
+
+        if(idGasto == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        gastoService.deletar(gastoOptional.get());
+        return ResponseEntity.noContent().build();
+    }
+
 
 
     }
