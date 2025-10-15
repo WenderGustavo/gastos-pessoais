@@ -2,6 +2,7 @@ package io.github.wendergustavo.gastospessoais.controller;
 
 
 import io.github.wendergustavo.gastospessoais.controller.mappers.GastoMapper;
+import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.service.GastoService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
