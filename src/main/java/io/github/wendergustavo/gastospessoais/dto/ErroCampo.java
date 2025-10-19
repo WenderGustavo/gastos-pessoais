@@ -1,4 +1,9 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-public record ErroCampo() {
+public record ErroCampo(
+        String campo,
+        String mensagem
+) {
+
+
 }
