@@ -23,14 +23,14 @@ public class UsuarioValidator {
         }
 
         if (!senhaValida(usuario.getSenha())) {
-            throw new CampoInvalidoException("Password must be between 8 and 128 characters.");
+            throw new CampoInvalidoException("senha","Password must be between 8 and 128 characters.");
         }
     }
 
     public boolean emailJaExiste(String email, UUID id) {
         return repository.findByEmail(email)
-                .map(u -> id == null || !id.equals(u.getId()))
-                .orElse(false);
+                .filter(u -> id == null || !u.getId().equals(id))
+                .isPresent();
     }
 
     public boolean senhaValida(String senha){
