@@ -18,15 +18,15 @@ public class GastoValidator {
     public void validarGasto(Gasto gasto) {
 
         if (!validarValorPositivo(gasto)) {
-            throw new CampoInvalidoException("Value must be greater than zero.");
+            throw new CampoInvalidoException("valor","Value must be greater than zero.");
         }
 
         if (!validarUsuarioExistente(gasto)) {
-            throw new CampoInvalidoException("User not found or not informed.");
+            throw new CampoInvalidoException("usuario","User not found or not informed.");
         }
 
         if (!dataValida(gasto)) {
-            throw new CampoInvalidoException("Expenditure date cannot be in the future.");
+            throw new CampoInvalidoException("data","Expenditure date cannot be in the future.");
         }
     }
 
