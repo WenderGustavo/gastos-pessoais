@@ -1,7 +1,7 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
 
-import io.github.wendergustavo.gastospessoais.controller.mappers.GastoMapper;
+import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.model.Gasto;

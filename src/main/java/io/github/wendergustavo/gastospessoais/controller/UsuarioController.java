@@ -1,7 +1,7 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
 
-import io.github.wendergustavo.gastospessoais.controller.mappers.UsuarioMapper;
+import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.model.Usuario;

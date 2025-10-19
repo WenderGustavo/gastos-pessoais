@@ -20,7 +20,7 @@ public class DataBaseConfiguration {
     @Value("${spring.datasource.password}")
     String password;
     @Value("${spring.datasource.driver-class-name}")
-    String driver = "org.postgresql.Driver";
+    String driver;
 
 
     @Bean
@@ -34,7 +34,7 @@ public class DataBaseConfiguration {
 
         hikariConfig.setMaximumPoolSize(10); //maximo de conexões liberadas
         hikariConfig.setMinimumIdle(1); // tamanho inicial do pool
-        hikariConfig.setPoolName("library-db-pool");
+        hikariConfig.setPoolName("gasto-db-pool");
         hikariConfig.setMaxLifetime(600000);// 600 mil ms (10 min)
         hikariConfig.setConnectionTimeout(100000);// timeout para conseguir conexão
         hikariConfig.setConnectionTestQuery("select 1");// query de teste

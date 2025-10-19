@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.controller.mappers;
+package io.github.wendergustavo.gastospessoais.mapper;
 
 
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;

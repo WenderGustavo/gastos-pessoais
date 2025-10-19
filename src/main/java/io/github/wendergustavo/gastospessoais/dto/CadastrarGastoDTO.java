@@ -1,8 +1,8 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
 import io.github.wendergustavo.gastospessoais.model.GastoTipo;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
