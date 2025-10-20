@@ -1,9 +1,11 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
 
+import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
 import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -11,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")

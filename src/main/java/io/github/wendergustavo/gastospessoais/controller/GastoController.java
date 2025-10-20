@@ -3,7 +3,7 @@ package io.github.wendergustavo.gastospessoais.controller;
 
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
 import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.service.GastoService;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class GastoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GastoResponseDTO> buscarPorID(@PathVariable("id") String id){
+    public ResponseEntity<GastoSimplesDTO> buscarPorID(@PathVariable("id") String id){
 
         return gastoService.buscarPorId(UUID.fromString(id))
                 .map(gasto -> {

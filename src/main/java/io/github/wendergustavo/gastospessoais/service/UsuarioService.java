@@ -1,6 +1,7 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
+import io.github.wendergustavo.gastospessoais.model.Gasto;
 import io.github.wendergustavo.gastospessoais.model.Usuario;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

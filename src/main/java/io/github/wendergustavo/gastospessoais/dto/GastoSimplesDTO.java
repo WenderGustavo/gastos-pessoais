@@ -5,13 +5,12 @@ import io.github.wendergustavo.gastospessoais.model.GastoTipo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record GastoResponseDTO(
+public record GastoSimplesDTO(
 
         String descricao,
         GastoTipo gastoTipo,
         BigDecimal valor,
-        LocalDate dataGasto,
-        UsuarioResponseDTO usuario
+        LocalDate dataGasto
 
 ) {
 }
