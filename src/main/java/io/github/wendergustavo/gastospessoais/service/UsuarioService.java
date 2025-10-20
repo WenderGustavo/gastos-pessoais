@@ -50,6 +50,14 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    public List<Gasto> listarGastosPorEmail(String email){
+        if(email == null || email.isBlank()){
+            throw new IllegalArgumentException("Email must not be null or empty");
+        }
+
+        return usuarioRepository.listarGastosPorEmail(email);
+    }
+
     @Transactional
     public void atualizar(Usuario usuario){
 
