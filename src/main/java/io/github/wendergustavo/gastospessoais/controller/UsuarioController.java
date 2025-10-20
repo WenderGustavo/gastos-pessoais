@@ -72,4 +72,19 @@ public class UsuarioController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<List<GastoSimplesDTO>> listarGastosPorEmail(@PathVariable String email) {
+        List<GastoSimplesDTO> gastos = usuarioService.listarGastosPorEmail(email)
+                .stream()
+                .map(gasto -> new GastoSimplesDTO(
+                        gasto.getDescricao(),
+                        gasto.getGastoTipo(),
+                        gasto.getValor(),
+                        gasto.getDataGasto()))
+                .toList();
+
+        return ResponseEntity.ok(gastos);
+    }
+
 }
