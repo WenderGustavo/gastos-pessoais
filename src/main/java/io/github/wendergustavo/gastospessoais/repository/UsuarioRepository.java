@@ -10,4 +10,14 @@ import java.util.UUID;
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
     Optional<Usuario> findByEmail(String email);
+
+    @Query("""
+    SELECT g
+    FROM Gasto g
+    JOIN g.usuario u
+    WHERE u.email = :email
+    ORDER BY g.dataGasto DESC
+    """)
+    List<Gasto> listarGastosPorEmail(@Param("email") String email);
+
 }
