@@ -24,7 +24,8 @@ public class UsuarioService {
 
 
     @Transactional
-    public Usuario salvar(Usuario usuario){
+    public Usuario salvar(UsuarioDTO usuarioDTO){
+        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuarioValidator.validar(usuario);
         return usuarioRepository.save(usuario);
     }
