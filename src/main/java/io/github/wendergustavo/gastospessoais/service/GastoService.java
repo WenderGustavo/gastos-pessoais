@@ -18,6 +18,7 @@ public class GastoService {
 
     private final GastoRepository gastoRepository;
     private final GastoValidator gastoValidator;
+    private final GastoMapper gastoMapper;
 
     @Transactional
     public Gasto salvar(Gasto gasto){
