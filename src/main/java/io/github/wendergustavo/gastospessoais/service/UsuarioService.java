@@ -35,8 +35,8 @@ public class UsuarioService {
         if(id == null){
             throw new IllegalArgumentException("User ID must not be null.");
         }
-
-        return usuarioRepository.findById(id);
+        return usuarioRepository.findById(id)
+                .map(usuarioMapper::toResponseDTO);
     }
 
     @Transactional
