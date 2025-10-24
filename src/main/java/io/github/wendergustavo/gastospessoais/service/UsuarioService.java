@@ -76,15 +76,11 @@ public class UsuarioService {
             throw new IllegalArgumentException("Email must not be null or empty");
         }
 
-        return usuarioRepository.listarGastosPorEmail(email);
+        return usuarioRepository.listarGastosPorEmail(email)
+                .stream()
+                .map(gastoMapper::toDTO)
+                .toList();
     }
-
-    @Transactional
-    public void atualizar(Usuario usuario){
-
-        if(usuario.getId() == null){
-            throw  new IllegalArgumentException("Para atualizar é necessario que o Usuario ja esteja cadastrado.");
-        }
 
         usuarioValidator.validar(usuario);
         usuarioRepository.save(usuario);
