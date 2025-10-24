@@ -13,4 +13,5 @@ public interface UsuarioMapper {
 
     UsuarioResponseDTO toResponseDTO(Usuario usuario);
 
+    void updateEntityFromDTO(UsuarioDTO usuarioDTO,@MappingTarget Usuario usuario);
 }
