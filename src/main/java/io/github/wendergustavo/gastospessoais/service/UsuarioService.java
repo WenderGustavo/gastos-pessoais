@@ -1,8 +1,12 @@
 package io.github.wendergustavo.gastospessoais.service;
 
+import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
-import io.github.wendergustavo.gastospessoais.model.Gasto;
-import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
+import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import io.github.wendergustavo.gastospessoais.validador.UsuarioValidator;
@@ -32,7 +36,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Optional<Usuario> buscarPorId(UUID id){
+    public Optional<UsuarioResponseDTO> buscarPorId(UUID id){
 
         if(id == null){
             throw new IllegalArgumentException("User ID must not be null.");
@@ -42,7 +46,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void deletar(Usuario usuario){
+    public void deletar(UUID id){
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
@@ -73,8 +77,8 @@ public class UsuarioService {
         return usuarioMapper.toResponseDTO(salvo);
     }
 
-    public List<Gasto> listarGastosPorEmail(String email){
-        if(email == null || email.isBlank()){
+    public List<GastoSimplesDTO> listarGastosPorEmail(String email) {
+        if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email must not be null or empty");
         }
 
@@ -84,9 +88,6 @@ public class UsuarioService {
                 .toList();
     }
 
-        usuarioValidator.validar(usuario);
-        usuarioRepository.save(usuario);
-    }
 
     public boolean possuiGasto(Usuario usuario){
         return gastoRepository.existsByUsuario(usuario);
