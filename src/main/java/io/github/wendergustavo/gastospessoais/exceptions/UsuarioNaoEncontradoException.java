@@ -1,4 +1,9 @@
 package io.github.wendergustavo.gastospessoais.exceptions;
 
-public class UsuarioNaoEncontradoException {
+import java.util.UUID;
+
+public class UsuarioNaoEncontradoException extends RuntimeException {
+    public UsuarioNaoEncontradoException(UUID id) {
+        super("Usuário com ID " + id + " não encontrado.");
+    }
 }
