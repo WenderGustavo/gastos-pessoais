@@ -3,8 +3,9 @@ package io.github.wendergustavo.gastospessoais.mapper;
 
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {

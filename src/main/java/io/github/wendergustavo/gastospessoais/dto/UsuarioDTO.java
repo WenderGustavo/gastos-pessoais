@@ -5,11 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.UUID;
-
 public record UsuarioDTO(
-
-        UUID id,
 
         @NotNull(message = "Campo obrigatorio.")
         @Size(min = 3, max = 100, message = "Campo fora do tamanho padrao.")

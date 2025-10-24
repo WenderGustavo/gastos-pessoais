@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.model;
+package io.github.wendergustavo.gastospessoais.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;

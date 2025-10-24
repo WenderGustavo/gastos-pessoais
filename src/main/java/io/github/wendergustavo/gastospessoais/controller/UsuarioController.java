@@ -2,92 +2,61 @@ package io.github.wendergustavo.gastospessoais.controller;
 
 
 import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
-import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.model.Gasto;
-import io.github.wendergustavo.gastospessoais.model.Usuario;
+import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
-public class UsuarioController {
+public class UsuarioController implements GenericController {
 
     private final UsuarioService usuarioService;
-    private final UsuarioMapper mapper;
 
 
     @PostMapping
-    public ResponseEntity<Void> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
-        Usuario usuario = mapper.toEntity(dto);
-        usuarioService.salvar(usuario);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UsuarioResponseDTO> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
+
+        UsuarioResponseDTO usuarioResponseDTO = usuarioService.salvar(dto);
+        URI location = URI.create("/usuarios/" + usuarioResponseDTO.id()); // precisa incluir getId() no DTO
+        return ResponseEntity.created(location).body(usuarioResponseDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") String id){
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") UUID id){
 
-        var idUsuario = UUID.fromString(id);
+       UsuarioResponseDTO usuarioResponseDTO = usuarioService.buscarPorId(id);
+       return ResponseEntity.ok(usuarioResponseDTO);
 
-        return usuarioService.buscarPorId(idUsuario)
-                .map(usuario -> {
-                    UsuarioResponseDTO usuarioResponseDTO = mapper.toResponseDTO(usuario);
-                    return ResponseEntity.ok(usuarioResponseDTO);
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable("id") String id){
-
-        var idUsuario = UUID.fromString(id);
-
-        Optional<Usuario> usuarioOptional = usuarioService.buscarPorId(idUsuario);
-
-        if(usuarioOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        usuarioService.deletar(usuarioOptional.get());
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@PathVariable String id, @RequestBody @Valid UsuarioDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> atualizar(@PathVariable UUID id, @RequestBody @Valid UsuarioDTO dto) {
 
-        var idUsuario = UUID.fromString(id);
-        return usuarioService.buscarPorId(idUsuario)
-                .map(usuario -> {
-                    usuario.setNome(dto.nome());
-                    usuario.setEmail(dto.email());
-                    usuario.setSenha(dto.senha());
-                    usuarioService.atualizar(usuario);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        UsuarioResponseDTO usuarioResponseDTO = usuarioService.atualizar(id,dto);
+        return ResponseEntity.ok(usuarioResponseDTO);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable("id") UUID id){
 
-    @GetMapping("/email/{email}")
+        usuarioService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+   @GetMapping("/email/{email}")
     public ResponseEntity<List<GastoSimplesDTO>> listarGastosPorEmail(@PathVariable String email) {
-        List<GastoSimplesDTO> gastos = usuarioService.listarGastosPorEmail(email)
-                .stream()
-                .map(gasto -> new GastoSimplesDTO(
-                        gasto.getDescricao(),
-                        gasto.getGastoTipo(),
-                        gasto.getValor(),
-                        gasto.getDataGasto()))
-                .toList();
 
+        List<GastoSimplesDTO>  gastos = usuarioService.listarGastosPorEmail(email);
         return ResponseEntity.ok(gastos);
     }
 

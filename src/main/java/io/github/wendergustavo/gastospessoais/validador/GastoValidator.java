@@ -1,7 +1,7 @@
 package io.github.wendergustavo.gastospessoais.validador;
 
 import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
-import io.github.wendergustavo.gastospessoais.model.Gasto;
+import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

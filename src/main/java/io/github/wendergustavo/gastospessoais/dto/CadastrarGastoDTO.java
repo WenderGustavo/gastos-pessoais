@@ -1,6 +1,6 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-import io.github.wendergustavo.gastospessoais.model.GastoTipo;
+import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record CadastrarGastoDTO(
-
-        UUID uuid,
 
         @Size(min = 0, max = 150)
         String descricao,
@@ -27,8 +25,5 @@ public record CadastrarGastoDTO(
 
         @NotNull(message = "campo obrigatorio")
         UUID idUsuario
-
-
-
 ) {
 }

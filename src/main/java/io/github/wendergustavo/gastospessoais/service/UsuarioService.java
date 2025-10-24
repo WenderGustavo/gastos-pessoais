@@ -5,6 +5,7 @@ import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
+import io.github.wendergustavo.gastospessoais.exceptions.UsuarioNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,43 +30,34 @@ public class UsuarioService {
 
 
     @Transactional
-    public Usuario salvar(UsuarioDTO usuarioDTO){
+    public UsuarioResponseDTO salvar(UsuarioDTO usuarioDTO){
+
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuarioValidator.validar(usuario);
-        return usuarioRepository.save(usuario);
+        return usuarioMapper.toResponseDTO(usuario);
     }
 
-    public Optional<UsuarioResponseDTO> buscarPorId(UUID id){
+    public UsuarioResponseDTO buscarPorId(UUID id){
 
         if(id == null){
             throw new IllegalArgumentException("User ID must not be null.");
         }
-        return usuarioRepository.findById(id)
-                .map(usuarioMapper::toResponseDTO);
-    }
-
-    @Transactional
-    public void deletar(UUID id){
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
 
-        if(possuiGasto(usuario)){
-            throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
-        }
-
-        usuarioRepository.delete(usuario);
+        return usuarioMapper.toResponseDTO(usuario);
     }
 
     @Transactional
     public UsuarioResponseDTO atualizar(UUID id, UsuarioDTO usuarioDTO){
 
         if(id == null){
-            throw  new IllegalArgumentException("To update, the User must already be registered.");
+            throw  new IllegalArgumentException("User ID must not be null.");
         }
 
         Usuario usuarioExistente = usuarioRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
 
         usuarioMapper.updateEntityFromDTO(usuarioDTO,usuarioExistente);
 
@@ -77,7 +68,25 @@ public class UsuarioService {
         return usuarioMapper.toResponseDTO(salvo);
     }
 
+    @Transactional
+    public void deletar(UUID id){
+
+        if(id == null){
+            throw new IllegalArgumentException("User ID must not be null.");
+        }
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
+
+        if(possuiGasto(usuario)){
+            throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
+        }
+
+        usuarioRepository.delete(usuario);
+    }
+
     public List<GastoSimplesDTO> listarGastosPorEmail(String email) {
+
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email must not be null or empty");
         }
