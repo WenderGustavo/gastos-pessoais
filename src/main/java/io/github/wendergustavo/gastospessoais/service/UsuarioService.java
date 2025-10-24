@@ -42,9 +42,8 @@ public class UsuarioService {
     @Transactional
     public void deletar(Usuario usuario){
 
-        if(usuario.getId() == null){
-            throw new IllegalArgumentException("User ID must not be null.");
-        }
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
         if(possuiGasto(usuario)){
             throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
