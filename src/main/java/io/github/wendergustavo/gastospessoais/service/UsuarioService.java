@@ -22,6 +22,7 @@ public class UsuarioService {
     private final UsuarioValidator usuarioValidator;
     private final UsuarioMapper usuarioMapper;
     private final GastoRepository gastoRepository;
+    private final GastoMapper gastoMapper;
 
 
     @Transactional
