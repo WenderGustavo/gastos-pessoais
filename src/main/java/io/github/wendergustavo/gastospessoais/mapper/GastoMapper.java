@@ -1,23 +1,24 @@
 package io.github.wendergustavo.gastospessoais.mapper;
 
+import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
-import io.github.wendergustavo.gastospessoais.model.Gasto;
-import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
+import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mapstruct.MappingTarget;
 
 
-@Mapper(componentModel = "spring", uses = {UsuarioMapper.class})
-public abstract class GastoMapper
- {
-     @Autowired
-     UsuarioRepository usuarioRepository;
+@Mapper(componentModel = "spring")
+public interface GastoMapper {
 
-     @Mapping(target = "usuario", expression = "java( usuarioRepository.findById(dto.idUsuario()).orElse(null) )")
-     @Mapping(target = "gastoTipo", source = "gastoTipo")
-     public abstract Gasto toEntity(CadastrarGastoDTO dto);
+//     @Mapping(target = "usuario", expression = "java( usuarioRepository.findById(dto.idUsuario()).orElse(null) )")
+//     @Mapping(target = "gastoTipo", source = "gastoTipo")
 
-     public abstract GastoSimplesDTO toDTO(Gasto gasto);
+
+    Gasto toEntity(CadastrarGastoDTO dto);
+
+    GastoSimplesDTO toDTO(Gasto gasto);
+
+    void updateEntityFromDTO(AtualizarGastoDTO gastoDTO, @MappingTarget Gasto gasto) ;
+
 }
