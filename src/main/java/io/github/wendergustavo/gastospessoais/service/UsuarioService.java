@@ -52,6 +52,25 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    @Transactional
+    public UsuarioResponseDTO atualizar(UUID id, UsuarioDTO usuarioDTO){
+
+        if(id == null){
+            throw  new IllegalArgumentException("To update, the User must already be registered.");
+        }
+
+        Usuario usuarioExistente = usuarioRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+        usuarioMapper.updateEntityFromDTO(usuarioDTO,usuarioExistente);
+
+        usuarioValidator.validar(usuarioExistente);
+
+        Usuario salvo = usuarioRepository.save(usuarioExistente);
+
+        return usuarioMapper.toResponseDTO(salvo);
+    }
+
     public List<Gasto> listarGastosPorEmail(String email){
         if(email == null || email.isBlank()){
             throw new IllegalArgumentException("Email must not be null or empty");
