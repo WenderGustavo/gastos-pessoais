@@ -40,24 +40,24 @@ O objetivo do projeto é treinar boas práticas de desenvolvimento, como **MVC**
 
 src/
 ├─ main/
-│   ├─ java/
-│   │   └─ io.github.wendergustavo.gastospessoais/
-│   │       ├─ configuration/   # Configurações do Spring (Beans, Security, etc.)
-│   │       ├─ controller/      # Endpoints REST e Controllers
-│   │       ├─ dto/             # Data Transfer Objects para requisições/respostas
-│   │       ├─ entity/          # Entidades JPA (Usuario, Gasto, etc.)
-│   │       ├─ exceptions/      # Exceções customizadas do projeto
-│   │       ├─ mapper/          # Conversão entre Entity e DTO
-│   │       ├─ repository/      # Interfaces de acesso a dados (JPA)
-│   │       ├─ service/         # Lógica de negócio e transações
-│   │       └─ validador/       # Regras de validação (UsuarioValidator, GastoValidator)
-│   └─ resources/
-│       └─ application.yml      # Configurações do Spring
+│ ├─ java/
+│ │ └─ io.github.wendergustavo.gastospessoais/
+│ │ ├─ configuration/ # Configurações do Spring (Beans, Security, etc.)
+│ │ ├─ controller/ # Endpoints REST e Controllers
+│ │ ├─ dto/ # Data Transfer Objects para requisições/respostas
+│ │ ├─ entity/ # Entidades JPA (Usuario, Gasto, etc.)
+│ │ ├─ exceptions/ # Exceções customizadas do projeto
+│ │ ├─ mapper/ # Conversão entre Entity e DTO
+│ │ ├─ repository/ # Interfaces de acesso a dados (JPA)
+│ │ ├─ service/ # Lógica de negócio e transações
+│ │ └─ validador/ # Regras de validação (UsuarioValidator, GastoValidator)
+│ └─ resources/
+│ └─ application.yml # Configurações do Spring
 └─ test/
 ├─ java/
-│   └─ io.github.wendergustavo.gastospessoais/
-|       |─ entity/      #Testes de getters e setters se estão funcionando corretamente.
-│       ├─ repository/      # Testes de integração dos repositories
-│       ├─ service/         # Testes unitários e de integração dos services
+│ └─ io.github.wendergustavo.gastospessoais/
+│ ├─ entity/ # Testes de getters e setters
+│ ├─ repository/ # Testes de integração dos repositories
+│ └─ service/ # Testes unitários e de integração dos services
 └─ resources/
-└─ sql/                  # Scripts SQL para popular o banco de teste
+└─ sql/ # Scripts SQL para popular o banco de teste
