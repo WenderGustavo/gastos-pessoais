@@ -37,7 +37,7 @@ O objetivo do projeto é treinar boas práticas de desenvolvimento, como **MVC**
 ---
 
 ## Estrutura do Projeto
-
+```
 src/
 ├─ main/
 │ ├─ java/
@@ -61,3 +61,4 @@ src/
 │ └─ service/ # Testes unitários e de integração dos services
 └─ resources/
 └─ sql/ # Scripts SQL para popular o banco de teste
+```
