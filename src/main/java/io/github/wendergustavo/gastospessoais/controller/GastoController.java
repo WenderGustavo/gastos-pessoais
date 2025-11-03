@@ -21,12 +21,12 @@ public class GastoController implements GenericController{
     private final GastoService gastoService;
 
     @PostMapping
-    public ResponseEntity<GastoSimplesDTO> salvarGasto(@RequestBody @Valid CadastrarGastoDTO gastoDTO){
+    public ResponseEntity<Void> salvarGasto(@RequestBody @Valid CadastrarGastoDTO gastoDTO){
 
         GastoSimplesDTO gastoSalvo = gastoService.salvar(gastoDTO);
 
-        URI location = URI.create("/gastos/" + gastoSalvo.id()); // precisa incluir getId() no DTO
-        return ResponseEntity.created(location).body(gastoSalvo);
+        URI location = gerarHeaderLocation( gastoSalvo.id());
+        return ResponseEntity.created(location).build();
 
     }
 

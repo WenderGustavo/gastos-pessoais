@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record AtualizarGastoDTO(
+
         @Size(min = 0, max = 150)
         String descricao,
         @NotNull(message = "Campo obrigatorio")

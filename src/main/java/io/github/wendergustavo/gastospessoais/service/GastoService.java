@@ -37,8 +37,8 @@ public class GastoService {
         gasto.setUsuario(usuario);
 
         gastoValidator.validarGasto(gasto);
-
-        return gastoMapper.toDTO(gasto);
+        Gasto gastoSalvo = gastoRepository.save(gasto);
+        return gastoMapper.toDTO(gastoSalvo);
     }
 
     public GastoSimplesDTO buscarPorId(UUID id){

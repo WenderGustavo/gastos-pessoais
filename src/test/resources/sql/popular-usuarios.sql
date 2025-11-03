@@ -1,0 +1,2 @@
+INSERT INTO usuario (id, nome, email, senha ) values ('f15e4dc1-3b35-451f-92f9-78f5cf6cb069', 'Wender', 'teste@gmail.com', '12345678');
+INSERT INTO usuario (id, nome, email, senha) values ('77c28f70-b164-46c4-b301-8d01843782a2', 'Davi', 'teste2@gmail.com', '12345678');

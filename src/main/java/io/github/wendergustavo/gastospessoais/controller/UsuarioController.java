@@ -24,11 +24,11 @@ public class UsuarioController implements GenericController {
 
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
+    public ResponseEntity<Void> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
 
         UsuarioResponseDTO usuarioResponseDTO = usuarioService.salvar(dto);
-        URI location = URI.create("/usuarios/" + usuarioResponseDTO.id()); // precisa incluir getId() no DTO
-        return ResponseEntity.created(location).body(usuarioResponseDTO);
+        URI location = gerarHeaderLocation(usuarioResponseDTO.id());
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{id}")

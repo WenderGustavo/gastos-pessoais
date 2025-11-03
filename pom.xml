@@ -6,12 +6,12 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.wender.gestao</groupId>
 	<artifactId>gastos-pessoais</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Gerenciador de Gastos Pessoais	</name>
+	<name>Gerenciador de Gastos Pessoais</name>
 	<description>Aplicação para controle e análise de finanças pessoais</description>
 	<url/>
 	<licenses>
@@ -33,6 +33,7 @@
 			<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 	</properties>
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -87,7 +88,7 @@
 
 	<build>
 		<plugins>
-			<!-- Unified maven-compiler-plugin configuration -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

@@ -34,13 +34,14 @@ public class UsuarioService {
 
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuarioValidator.validar(usuario);
-        return usuarioMapper.toResponseDTO(usuario);
+        Usuario salvo = usuarioRepository.save(usuario);
+        return usuarioMapper.toResponseDTO(salvo);
     }
 
     public UsuarioResponseDTO buscarPorId(UUID id){
 
         if(id == null){
-            throw new IllegalArgumentException("User ID must not be null.");
+            throw new IllegalArgumentException(id + "User ID must not be null.");
         }
 
         Usuario usuario = usuarioRepository.findById(id)
@@ -53,7 +54,7 @@ public class UsuarioService {
     public UsuarioResponseDTO atualizar(UUID id, UsuarioDTO usuarioDTO){
 
         if(id == null){
-            throw  new IllegalArgumentException("User ID must not be null.");
+            throw  new IllegalArgumentException(id + "User ID must not be null.");
         }
 
         Usuario usuarioExistente = usuarioRepository.findById(id)
@@ -72,7 +73,7 @@ public class UsuarioService {
     public void deletar(UUID id){
 
         if(id == null){
-            throw new IllegalArgumentException("User ID must not be null.");
+            throw new IllegalArgumentException(id + "User ID must not be null.");
         }
 
         Usuario usuario = usuarioRepository.findById(id)
