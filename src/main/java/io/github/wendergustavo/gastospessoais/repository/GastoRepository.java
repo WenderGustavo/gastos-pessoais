@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface GastoRepository extends JpaRepository<Gasto, UUID> {
 
     boolean existsByUsuario(Usuario usuario);
+
+    List<Gasto> findByUsuarioEmailOrderByDataGastoDesc(String email);
 }
