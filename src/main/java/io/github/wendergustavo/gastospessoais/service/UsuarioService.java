@@ -92,7 +92,7 @@ public class UsuarioService {
             throw new IllegalArgumentException("Email must not be null or empty");
         }
 
-        return usuarioRepository.listarGastosPorEmail(email)
+        return gastoRepository.findByUsuarioEmailOrderByDataGastoDesc(email)
                 .stream()
                 .map(gastoMapper::toDTO)
                 .toList();
