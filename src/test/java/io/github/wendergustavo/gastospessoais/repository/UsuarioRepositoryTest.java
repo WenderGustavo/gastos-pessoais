@@ -120,7 +120,7 @@ class UsuarioRepositoryTest {
 
         gastoRepository.saveAll(List.of(gasto1, gasto2));
 
-        List<Gasto> resultado = usuarioRepository.listarGastosPorEmail("teste@gmail.com");
+        List<Gasto> resultado = gastoRepository.findByUsuarioEmailOrderByDataGastoDesc("teste@gmail.com");
 
         assertThat(resultado).hasSize(2);
         assertThat(resultado.get(0).getDescricao()).isEqualTo("Transporte");
