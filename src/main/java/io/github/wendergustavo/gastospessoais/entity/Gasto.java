@@ -1,7 +1,9 @@
 package io.github.wendergustavo.gastospessoais.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
@@ -10,6 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString(exclude = "usuario")
 public class Gasto {
 
