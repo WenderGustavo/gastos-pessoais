@@ -15,7 +15,7 @@ public class GastoValidator {
 
     private final UsuarioRepository usuarioRepository;
 
-    public void validarGasto(Gasto gasto) {
+    public void validar(Gasto gasto) {
 
         if (!validarValorPositivo(gasto)) {
             throw new CampoInvalidoException("valor","Value must be greater than zero.");

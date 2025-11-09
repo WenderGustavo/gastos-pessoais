@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17.4
+    container_name: gastodb
+    restart: always
+    environment:
+      POSTGRES_DB: gasto
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - gasto-network
+
+  pgadmin:
+    image: dpage/pgadmin4:8.14
+    container_name: pgadmin4g
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres
+    networks:
+      - gasto-network
+
+  app:
+    image: wendergustavo1/gastospessoais-springapp
+    container_name: gastos-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - gasto-network
+
+volumes:
+  pgdata:
+
+networks:
+  gasto-network:
+    driver: bridge

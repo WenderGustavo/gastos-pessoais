@@ -1,0 +1,17 @@
+# Ignorar controle de versão
+.git
+.gitignore
+
+# Ignorar arquivos de build e IDEs
+target
+.idea
+.vscode
+
+# Ignorar configs locais
+.env
+*.iml
+
+# Outros
+HELP.md
+Dockerfile
+docker-compose.yml

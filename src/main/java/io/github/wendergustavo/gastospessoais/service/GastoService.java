@@ -35,8 +35,7 @@ public class GastoService {
 
         Gasto gasto = gastoMapper.toEntity(dto);
         gasto.setUsuario(usuario);
-
-        gastoValidator.validarGasto(gasto);
+        gastoValidator.validar(gasto);
         Gasto gastoSalvo = gastoRepository.save(gasto);
         return gastoMapper.toDTO(gastoSalvo);
     }
@@ -70,7 +69,7 @@ public class GastoService {
             gastoExistente.setDataGasto(LocalDate.now());
         }
 
-        gastoValidator.validarGasto(gastoExistente);
+        gastoValidator.validar(gastoExistente);
         gastoRepository.save(gastoExistente);
 
         return gastoMapper.toDTO(gastoExistente);
@@ -89,8 +88,5 @@ public class GastoService {
 
         gastoRepository.delete(gasto);
     }
-
-
-
 
 }

@@ -28,7 +28,6 @@ public class UsuarioService {
     private final GastoRepository gastoRepository;
     private final GastoMapper gastoMapper;
 
-
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioDTO usuarioDTO){
 
@@ -98,10 +97,7 @@ public class UsuarioService {
                 .toList();
     }
 
-
     public boolean possuiGasto(Usuario usuario){
         return gastoRepository.existsByUsuario(usuario);
     }
-
-
 }
