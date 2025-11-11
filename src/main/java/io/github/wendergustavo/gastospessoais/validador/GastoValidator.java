@@ -2,6 +2,8 @@ package io.github.wendergustavo.gastospessoais.validador;
 
 import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
+import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
+import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 public class GastoValidator {
 
     private final UsuarioRepository usuarioRepository;
+    private final GastoRepository gastoRepository;
 
     public void validar(Gasto gasto) {
 
@@ -27,6 +30,11 @@ public class GastoValidator {
 
         if (!dataValida(gasto)) {
             throw new CampoInvalidoException("data","Expenditure date cannot be in the future.");
+        }
+
+        if(validarGastoDuplicado(gasto)){
+            throw new RegistroDuplicadoException("Duplicate spending is not allowed");
+
         }
     }
 
@@ -43,5 +51,16 @@ public class GastoValidator {
 
     private boolean dataValida(Gasto gasto) {
         return gasto.getDataGasto() != null && !gasto.getDataGasto().isAfter(LocalDate.now());
+    }
+
+    private boolean validarGastoDuplicado(Gasto gasto){
+
+        return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+                gasto.getDescricao(),
+                gasto.getGastoTipo(),
+                gasto.getValor(),
+                gasto.getDataGasto(),
+                gasto.getUsuario()
+        );
     }
 }
