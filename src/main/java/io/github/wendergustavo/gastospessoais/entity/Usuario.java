@@ -31,6 +31,9 @@ public class Usuario {
     @Column(name = "senha",length =(128), nullable = false)
     private String senha;
 
+    @Column(nullable = false, length = 20)
+    private String role;
+
     @OneToMany(mappedBy = "usuario")
     private List<Gasto> gastos;
 
