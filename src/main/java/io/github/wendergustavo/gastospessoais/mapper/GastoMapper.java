@@ -17,7 +17,7 @@ public interface GastoMapper {
 
     Gasto toEntity(CadastrarGastoDTO dto);
 
-    GastoSimplesDTO toDTO(Gasto gasto);
+    GastoResponseDTO toDTO(Gasto gasto);
 
     void updateEntityFromDTO(AtualizarGastoDTO gastoDTO, @MappingTarget Gasto gasto) ;
 
