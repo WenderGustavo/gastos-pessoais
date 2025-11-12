@@ -2,7 +2,7 @@ package io.github.wendergustavo.gastospessoais.dto;
 
 import java.util.List;
 
-public record ListaUsuarioDTO(
+public record ListaUsuarioResponseDTO(
 
         List<UsuarioResponseDTO> usuarios
 
