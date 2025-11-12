@@ -1,10 +1,10 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
 
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +54,16 @@ public class UsuarioController implements GenericController {
     }
 
    @GetMapping("/email/{email}")
-    public ResponseEntity<List<GastoSimplesDTO>> listarGastosPorEmail(@PathVariable String email) {
+    public ResponseEntity<List<GastoResponseDTO>> listarGastosPorEmail(@PathVariable String email) {
 
-        List<GastoSimplesDTO>  gastos = usuarioService.listarGastosPorEmail(email);
+        List<GastoResponseDTO>  gastos = usuarioService.listarGastosPorEmail(email);
         return ResponseEntity.ok(gastos);
+    }
+
+    @GetMapping
+    public ResponseEntity<ListaUsuarioResponseDTO> listarUsuarios() {
+        ListaUsuarioResponseDTO usuarios = usuarioService.buscarTodosUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 
 }
