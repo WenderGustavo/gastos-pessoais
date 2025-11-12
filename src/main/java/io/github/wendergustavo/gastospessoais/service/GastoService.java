@@ -28,7 +28,7 @@ public class GastoService {
     private final UsuarioRepository usuarioRepository;
 
     @Transactional
-    public GastoSimplesDTO salvar(CadastrarGastoDTO dto) {
+    public GastoResponseDTO salvar(CadastrarGastoDTO dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.idUsuario())
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
