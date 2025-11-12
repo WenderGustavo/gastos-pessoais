@@ -1,6 +1,6 @@
 package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;

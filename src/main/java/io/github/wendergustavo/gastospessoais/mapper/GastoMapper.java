@@ -2,7 +2,7 @@ package io.github.wendergustavo.gastospessoais.mapper;
 
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

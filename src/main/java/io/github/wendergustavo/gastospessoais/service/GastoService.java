@@ -3,7 +3,7 @@ package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.GastoNaoEncontradoException;

@@ -2,9 +2,10 @@ package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
+import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.exceptions.GastoNaoEncontradoException;
@@ -57,6 +58,7 @@ class GastoServiceTest {
                 "Wender",
                 "teste@gmail.com",
                 "123456789",
+                Roles.USER,
                 null);
 
         var dto = new CadastrarGastoDTO("Almoco",
@@ -67,7 +69,7 @@ class GastoServiceTest {
 
         var gasto = new Gasto();
         var gastoSalvo = new Gasto();
-        var response = new GastoSimplesDTO(UUID.randomUUID(),"Almoco",GastoTipo.ALIMENTACAO,BigDecimal.valueOf(35.0),LocalDate.now());
+        var response = new GastoResponseDTO(UUID.randomUUID(),"Almoco",GastoTipo.ALIMENTACAO,BigDecimal.valueOf(35.0),LocalDate.now());
 
         Mockito.when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
         Mockito.when(gastoMapper.toEntity(dto)).thenReturn(gasto);
@@ -78,7 +80,7 @@ class GastoServiceTest {
 
         assertThat(result)
                 .isNotNull()
-                .extracting(GastoSimplesDTO::descricao)
+                .extracting(GastoResponseDTO::descricao)
                 .isEqualTo("Almoco");
 
         assertThat(result.gastoTipo()).isEqualTo(GastoTipo.ALIMENTACAO);
@@ -99,6 +101,7 @@ class GastoServiceTest {
                 "Wender",
                 "teste@gmail.com",
                 "123456789",
+                Roles.USER,
                 null);
 
         var dto = new CadastrarGastoDTO("Carro",
@@ -119,7 +122,7 @@ class GastoServiceTest {
     void deveLancarExcecaoAoSalvarGastoComValorInvalido() {
 
         var id = UUID.randomUUID();
-        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789", null);
+        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789", Roles.USER,null);
 
         var dto = new CadastrarGastoDTO(
                 "Transporte",
@@ -145,7 +148,7 @@ class GastoServiceTest {
     @DisplayName("Deve lançar exceção ao tentar salvar gasto com data futura")
     void deveLancarExcecaoAoSalvarGastoComDataFutura() {
         var id = UUID.randomUUID();
-        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789", null);
+        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789",Roles.USER, null);
 
         var dto = new CadastrarGastoDTO(
                 "Viagem",
@@ -188,7 +191,7 @@ class GastoServiceTest {
     void deveBuscarGastoPorIdComSucesso() {
         var id = UUID.randomUUID();
         var gasto = new Gasto();
-        var gastoDTO = new GastoSimplesDTO(id, "Almoço", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(30), LocalDate.now());
+        var gastoDTO = new GastoResponseDTO(id, "Almoço", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(30), LocalDate.now());
 
         Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
         Mockito.when(gastoMapper.toDTO(gasto)).thenReturn(gastoDTO);
@@ -197,7 +200,7 @@ class GastoServiceTest {
 
         assertThat(result)
                 .isNotNull()
-                .extracting(GastoSimplesDTO::descricao)
+                .extracting(GastoResponseDTO::descricao)
                 .isEqualTo("Almoço");
 
         Mockito.verify(gastoRepository).findById(id);
@@ -227,7 +230,7 @@ class GastoServiceTest {
     void deveAtualizarGastoComSucesso() {
         var id = UUID.randomUUID();
         var gastoExistente = new Gasto();
-        var gastoAtualizado = new GastoSimplesDTO(id, "Mercado", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
+        var gastoAtualizado = new GastoResponseDTO(id, "Mercado", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
         var atualizarDTO = new AtualizarGastoDTO("Mercado",GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
 
         Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.of(gastoExistente));
@@ -237,7 +240,7 @@ class GastoServiceTest {
 
         assertThat(result)
                 .isNotNull()
-                .extracting(GastoSimplesDTO::descricao)
+                .extracting(GastoResponseDTO::descricao)
                 .isEqualTo("Mercado");
 
         Mockito.verify(gastoRepository).save(gastoExistente);
