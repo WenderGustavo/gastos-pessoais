@@ -1,6 +1,7 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
@@ -95,6 +96,11 @@ public class UsuarioService {
                 .stream()
                 .map(gastoMapper::toDTO)
                 .toList();
+    }
+
+    public ListaUsuarioResponseDTO buscarTodosUsuarios() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        return usuarioMapper.toListResponseDTO(usuarios);
     }
 
     public boolean possuiGasto(Usuario usuario){
