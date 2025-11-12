@@ -2,6 +2,7 @@ package io.github.wendergustavo.gastospessoais.repository;
 
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
+import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,7 @@ class UsuarioRepositoryTest {
         usuario.setNome("Wender");
         usuario.setEmail("teste@gmail.com");
         usuario.setSenha("123456789");
+        usuario.setRole(Roles.USER);
     }
 
     @Test
@@ -88,6 +90,7 @@ class UsuarioRepositoryTest {
         usuarioSalvo.setNome("Wender Gustavo");
         usuarioSalvo.setEmail("teste2@gmail.com");
         usuarioSalvo.setSenha("123456789");
+        usuarioSalvo.setRole(Roles.USER);
 
         Usuario usuarioAtualizado = usuarioRepository.save(usuarioSalvo);
 

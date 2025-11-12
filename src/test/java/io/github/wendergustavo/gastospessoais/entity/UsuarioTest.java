@@ -10,10 +10,12 @@ public class UsuarioTest {
         usuario.setNome("Wender");
         usuario.setEmail("nem12@gmail.com");
         usuario.setSenha("nem123");
+        usuario.setRole(Roles.USER);
 
         assertEquals("Wender",usuario.getNome());
         assertEquals("nem12@gmail.com",usuario.getEmail());
         assertEquals("nem123",usuario.getSenha());
+        assertEquals(Roles.USER,usuario.getRole());
 
     }
 

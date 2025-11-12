@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   postgres:
@@ -27,11 +26,15 @@ services:
       - "15432:80"
     depends_on:
       - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     networks:
       - gasto-network
 
+
   app:
-    image: wendergustavo1/gastospessoais-springapp
+    build: .
+    image: gastospessoais-springapp-local
     container_name: gastos-api
     depends_on:
       - postgres
@@ -45,6 +48,7 @@ services:
       - gasto-network
 
 volumes:
+  pgadmin_data:
   pgdata:
 
 networks:

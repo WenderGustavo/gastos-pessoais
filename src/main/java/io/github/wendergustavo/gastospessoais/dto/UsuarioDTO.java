@@ -1,5 +1,6 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
+import io.github.wendergustavo.gastospessoais.entity.Roles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,10 @@ public record UsuarioDTO(
 
         @NotNull(message = "Campo obrigatorio.")
         @Size(min = 8, max = 128, message = "Campo fora do tamanho padrao.")
-        String senha
+        String senha,
+
+        @NotNull(message = "Campo obrigatorio.")
+        Roles role
+
 ){
 }

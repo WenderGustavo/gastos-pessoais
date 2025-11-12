@@ -31,6 +31,10 @@ public class Usuario {
     @Column(name = "senha",length =(128), nullable = false)
     private String senha;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20,nullable = false )
+    private Roles role;
+
     @OneToMany(mappedBy = "usuario")
     private List<Gasto> gastos;
 

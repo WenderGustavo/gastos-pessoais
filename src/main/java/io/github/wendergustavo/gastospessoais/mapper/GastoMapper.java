@@ -2,7 +2,7 @@ package io.github.wendergustavo.gastospessoais.mapper;
 
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -17,7 +17,7 @@ public interface GastoMapper {
 
     Gasto toEntity(CadastrarGastoDTO dto);
 
-    GastoSimplesDTO toDTO(Gasto gasto);
+    GastoResponseDTO toDTO(Gasto gasto);
 
     void updateEntityFromDTO(AtualizarGastoDTO gastoDTO, @MappingTarget Gasto gasto) ;
 

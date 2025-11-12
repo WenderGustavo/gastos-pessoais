@@ -1,10 +1,11 @@
 package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.dto.GastoSimplesDTO;
+import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
+import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
@@ -50,10 +51,10 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve salvar um usuário com sucesso")
     void deveSalvarUmUsuarioComSucesso() {
-        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789");
+        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789",Roles.USER);
         var usuario = new Usuario();
         var usuarioSalvo = new Usuario();
-        var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com");
+        var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com",Roles.USER);
 
         Mockito.when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
         Mockito.when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
@@ -73,7 +74,7 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao tentar salvar usuário inválido")
     void deveLancarExcecaoAoSalvarUsuarioInvalido() {
-        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789");
+        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789",Roles.USER);
         var usuario = new Usuario();
 
         Mockito.when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
@@ -89,7 +90,7 @@ class UsuarioServiceTest {
     void deveBuscarUsuarioPorId() {
         var id = UUID.randomUUID();
         var usuario = new Usuario();
-        var response = new UsuarioResponseDTO(id, "Wender", "teste@gmail.com");
+        var response = new UsuarioResponseDTO(id, "Wender", "teste@gmail.com",Roles.USER);
 
         Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
         Mockito.when(usuarioMapper.toResponseDTO(usuario)).thenReturn(response);
@@ -123,10 +124,10 @@ class UsuarioServiceTest {
     @DisplayName("Deve atualizar um usuário com sucesso")
     void deveAtualizarUsuarioComSucesso() {
         var id = UUID.randomUUID();
-        var dto = new UsuarioDTO("Novo Nome", "novo@email.com", "novaSenha123");
-        var usuarioExistente = new Usuario(id, "Antigo", "antigo@email.com", "senha123", null);
-        var usuarioAtualizado = new Usuario(id, "Novo Nome", "novo@email.com", "novaSenha123", null);
-        var response = new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com");
+        var dto = new UsuarioDTO("Novo Nome", "novo@email.com", "novaSenha123",Roles.USER);
+        var usuarioExistente = new Usuario(id, "Antigo", "antigo@email.com", "senha123", Roles.USER,null);
+        var usuarioAtualizado = new Usuario(id, "Novo Nome", "novo@email.com", "novaSenha123",Roles.USER, null);
+        var response = new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com",Roles.USER);
 
         Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
 
@@ -158,7 +159,7 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção se o ID for nulo")
     void deveLancarExcecaoSeIdForNulo() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha");
+        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha",Roles.USER);
         assertThatThrownBy(() -> usuarioService.atualizar(null, usuarioDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("must not be null");
@@ -168,7 +169,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar exceção se o usuário não for encontrado")
     void deveLancarExcecaoSeUsuarioNaoForEncontrado() {
         UUID id = UUID.randomUUID();
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha");
+        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha",Roles.USER);
 
         Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -253,7 +254,7 @@ class UsuarioServiceTest {
         gastoEntity.setDataGasto(LocalDate.now());
         gastoEntity.setUsuario(usuario);
 
-        var gastoDTO = new GastoSimplesDTO(
+        var gastoDTO = new GastoResponseDTO(
                 UUID.randomUUID(),
                 "Almoço",
                 GastoTipo.ALIMENTACAO,
