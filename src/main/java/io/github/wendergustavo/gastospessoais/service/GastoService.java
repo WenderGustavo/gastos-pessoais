@@ -53,7 +53,7 @@ public class GastoService {
     }
 
     @Transactional
-    public GastoSimplesDTO atualizar(UUID id, AtualizarGastoDTO gastoDTO){
+    public GastoResponseDTO atualizar(UUID id, AtualizarGastoDTO gastoDTO){
 
         if(id == null){
             throw  new IllegalArgumentException(id +"Gasto ID must not be null.");
