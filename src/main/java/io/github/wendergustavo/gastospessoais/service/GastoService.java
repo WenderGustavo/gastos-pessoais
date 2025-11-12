@@ -40,7 +40,7 @@ public class GastoService {
         return gastoMapper.toDTO(gastoSalvo);
     }
 
-    public GastoSimplesDTO buscarPorId(UUID id){
+    public GastoResponseDTO buscarPorId(UUID id){
 
         if(id == null){
             throw new IllegalArgumentException(id +"Gasto ID must not be null.");
