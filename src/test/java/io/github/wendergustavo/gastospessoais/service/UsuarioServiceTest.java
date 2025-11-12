@@ -295,4 +295,29 @@ class UsuarioServiceTest {
         assertThatThrownBy(() -> usuarioService.listarGastosPorEmail("   "))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("Deve buscar todos os usuários com sucesso")
+    void deveBuscarTodosUsuariosComSucesso() {
+        var id = UUID.randomUUID();
+
+        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "senha123", Roles.USER,null);
+        usuarioResponseDTO = new UsuarioResponseDTO(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getRole());
+        listaUsuarioResponseDTO = new ListaUsuarioResponseDTO(List.of(usuarioResponseDTO));
+
+        List<Usuario> usuarios = List.of(usuario);
+        when(usuarioRepository.findAll()).thenReturn(usuarios);
+        when(usuarioMapper.toListResponseDTO(usuarios)).thenReturn(listaUsuarioResponseDTO);
+
+
+        ListaUsuarioResponseDTO resultado = usuarioService.buscarTodosUsuarios();
+
+
+        verify(usuarioRepository).findAll();
+        verify(usuarioMapper).toListResponseDTO(usuarios);
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.usuarios()).hasSize(1);
+        assertThat(resultado.usuarios().get(0).nome()).isEqualTo("Wender");
+        assertThat(resultado.usuarios().get(0).email()).isEqualTo("teste@gmail.com");
+    }
 }
