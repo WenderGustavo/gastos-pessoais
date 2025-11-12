@@ -1,6 +1,7 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
 import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
@@ -30,6 +31,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
@@ -45,6 +48,12 @@ class UsuarioServiceTest {
     @Mock
     private GastoMapper gastoMapper;
 
+    @Mock
+    private ListaUsuarioResponseDTO listaUsuarioResponseDTO;
+
+    @Mock
+    private UsuarioResponseDTO usuarioResponseDTO;
+
     @InjectMocks
     private UsuarioService usuarioService;
 
@@ -56,9 +65,9 @@ class UsuarioServiceTest {
         var usuarioSalvo = new Usuario();
         var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com",Roles.USER);
 
-        Mockito.when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
-        Mockito.when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
-        Mockito.when(usuarioMapper.toResponseDTO(usuarioSalvo)).thenReturn(response);
+        when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
+        when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
+        when(usuarioMapper.toResponseDTO(usuarioSalvo)).thenReturn(response);
 
         var result = usuarioService.salvar(dto);
 
@@ -67,8 +76,8 @@ class UsuarioServiceTest {
                 .extracting(UsuarioResponseDTO::email)
                 .isEqualTo("teste@gmail.com");
 
-        Mockito.verify(usuarioValidator).validar(usuario);
-        Mockito.verify(usuarioRepository).save(usuario);
+        verify(usuarioValidator).validar(usuario);
+        verify(usuarioRepository).save(usuario);
     }
 
     @Test
@@ -77,7 +86,7 @@ class UsuarioServiceTest {
         var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789",Roles.USER);
         var usuario = new Usuario();
 
-        Mockito.when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
+        when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
         Mockito.doThrow(new RegistroDuplicadoException("Email already in use."))
                 .when(usuarioValidator).validar(usuario);
 
@@ -92,8 +101,8 @@ class UsuarioServiceTest {
         var usuario = new Usuario();
         var response = new UsuarioResponseDTO(id, "Wender", "teste@gmail.com",Roles.USER);
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        Mockito.when(usuarioMapper.toResponseDTO(usuario)).thenReturn(response);
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
+        when(usuarioMapper.toResponseDTO(usuario)).thenReturn(response);
 
         var result = usuarioService.buscarPorId(id);
 
@@ -107,7 +116,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar exceção se usuário não for encontrado")
     void deveLancarExcecaoQuandoUsuarioNaoEncontrado() {
         var id = UUID.randomUUID();
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
+        when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.buscarPorId(id))
                 .isInstanceOf(UsuarioNaoEncontradoException.class);
@@ -129,7 +138,7 @@ class UsuarioServiceTest {
         var usuarioAtualizado = new Usuario(id, "Novo Nome", "novo@email.com", "novaSenha123",Roles.USER, null);
         var response = new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com",Roles.USER);
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
 
         Mockito.doAnswer(invocation -> {
             UsuarioDTO dtoArg = invocation.getArgument(0);
@@ -140,8 +149,8 @@ class UsuarioServiceTest {
             return null;
         }).when(usuarioMapper).updateEntityFromDTO(dto, usuarioExistente);
 
-        Mockito.when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioAtualizado);
-        Mockito.when(usuarioMapper.toResponseDTO(usuarioAtualizado)).thenReturn(response);
+        when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioAtualizado);
+        when(usuarioMapper.toResponseDTO(usuarioAtualizado)).thenReturn(response);
 
         var result = usuarioService.atualizar(id, dto);
 
@@ -150,11 +159,11 @@ class UsuarioServiceTest {
                 .extracting(UsuarioResponseDTO::nome)
                 .isEqualTo("Novo Nome");
 
-        Mockito.verify(usuarioRepository).findById(id);
-        Mockito.verify(usuarioMapper).updateEntityFromDTO(dto, usuarioExistente);
-        Mockito.verify(usuarioValidator).validar(usuarioExistente);
-        Mockito.verify(usuarioRepository).save(usuarioExistente);
-        Mockito.verify(usuarioMapper).toResponseDTO(usuarioAtualizado);
+        verify(usuarioRepository).findById(id);
+        verify(usuarioMapper).updateEntityFromDTO(dto, usuarioExistente);
+        verify(usuarioValidator).validar(usuarioExistente);
+        verify(usuarioRepository).save(usuarioExistente);
+        verify(usuarioMapper).toResponseDTO(usuarioAtualizado);
     }
     @Test
     @DisplayName("Deve lançar exceção se o ID for nulo")
@@ -171,7 +180,7 @@ class UsuarioServiceTest {
         UUID id = UUID.randomUUID();
         UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha",Roles.USER);
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
+        when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.atualizar(id, usuarioDTO))
                 .isInstanceOf(UsuarioNaoEncontradoException.class);
@@ -183,12 +192,12 @@ class UsuarioServiceTest {
         var id = UUID.randomUUID();
         var usuario = new Usuario();
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        Mockito.when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
+        when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
 
         usuarioService.deletar(id);
 
-        Mockito.verify(usuarioRepository).delete(usuario);
+        verify(usuarioRepository).delete(usuario);
     }
 
     @Test
@@ -197,8 +206,8 @@ class UsuarioServiceTest {
         var id = UUID.randomUUID();
         var usuario = new Usuario();
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        Mockito.when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
+        when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
 
         assertThatThrownBy(() -> usuarioService.deletar(id))
                 .isInstanceOf(OperacaoNaoPermitidaException.class);
@@ -209,7 +218,7 @@ class UsuarioServiceTest {
     void deveLancarExcecaoAoDeletarUsuarioNaoEncontrado() {
         var id = UUID.randomUUID();
 
-        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
+        when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.deletar(id))
                 .isInstanceOf(UsuarioNaoEncontradoException.class);
@@ -219,7 +228,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar true quando usuário possuir gastos")
     void deveRetornarTrueQuandoPossuiGasto() {
         var usuario = new Usuario();
-        Mockito.when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
+        when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
 
         var result = usuarioService.possuiGasto(usuario);
 
@@ -230,7 +239,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar false quando usuário não possuir gastos")
     void deveRetornarFalseQuandoNaoPossuiGasto() {
         var usuario = new Usuario();
-        Mockito.when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
+        when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
 
         var result = usuarioService.possuiGasto(usuario);
 
@@ -262,10 +271,10 @@ class UsuarioServiceTest {
                 LocalDate.now()
         );
 
-        Mockito.when(gastoRepository.findByUsuarioEmailOrderByDataGastoDesc(email))
+        when(gastoRepository.findByUsuarioEmailOrderByDataGastoDesc(email))
                 .thenReturn(List.of(gastoEntity));
 
-        Mockito.when(gastoMapper.toDTO(gastoEntity)).thenReturn(gastoDTO);
+        when(gastoMapper.toDTO(gastoEntity)).thenReturn(gastoDTO);
 
         var result = usuarioService.listarGastosPorEmail(email);
 
@@ -274,8 +283,8 @@ class UsuarioServiceTest {
                 .hasSize(1)
                 .containsExactly(gastoDTO);
 
-        Mockito.verify(gastoRepository).findByUsuarioEmailOrderByDataGastoDesc(email);
-        Mockito.verify(gastoMapper).toDTO(gastoEntity);
+        verify(gastoRepository).findByUsuarioEmailOrderByDataGastoDesc(email);
+        verify(gastoMapper).toDTO(gastoEntity);
     }
 
     @Test
