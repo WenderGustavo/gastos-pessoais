@@ -86,7 +86,7 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
-    public List<GastoSimplesDTO> listarGastosPorEmail(String email) {
+    public List<GastoResponseDTO> listarGastosPorEmail(String email) {
 
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email must not be null or empty");
