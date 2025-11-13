@@ -1,4 +1,9 @@
 package io.github.wendergustavo.gastospessoais.dto;
 
-public record ListaGastosResponseDTO() {
+import java.util.List;
+
+public record ListaGastosResponseDTO(
+
+        List<GastoResponseDTO> gastos
+) {
 }
