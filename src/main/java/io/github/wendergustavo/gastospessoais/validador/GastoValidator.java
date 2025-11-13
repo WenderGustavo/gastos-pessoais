@@ -32,7 +32,7 @@ public class GastoValidator {
             throw new CampoInvalidoException("data","Expenditure date cannot be in the future.");
         }
 
-        if(validarGastoDuplicado(gasto)){
+        if(!validarGastoDuplicado(gasto)){
             throw new RegistroDuplicadoException("Duplicate spending is not allowed");
 
         }

@@ -125,4 +125,38 @@ class GastoRepositoryTest {
         assertThat(existe).isFalse();
     }
 
+    @Test
+    @DisplayName("Deve retornar true quando existir gasto com todos os campos iguais")
+    void deveRetornarTrueQuandoGastoExistirComTodosCampos() {
+
+        Gasto gastoSalvo = gastoRepository.save(gasto);
+
+        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+                gasto.getDescricao(),
+                gasto.getGastoTipo(),
+                gasto.getValor(),
+                gasto.getDataGasto(),
+                gasto.getUsuario()
+        );
+
+        assertThat(existe).isTrue();
+    }
+
+    @Test
+    @DisplayName("Deve retornar false quando não existir gasto com os campos informados")
+    void deveRetornarFalseQuandoGastoNaoExistir() {
+
+        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+                "Café",
+                GastoTipo.ALIMENTACAO,
+                BigDecimal.valueOf(10),
+                LocalDate.now(),
+                usuario
+        );
+
+        assertThat(existe).isFalse();
+    }
+
+
+
 }

@@ -1,11 +1,13 @@
 package io.github.wendergustavo.gastospessoais.mapper;
 
-import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.*;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
+import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
@@ -18,6 +20,13 @@ public interface GastoMapper {
     Gasto toEntity(CadastrarGastoDTO dto);
 
     GastoResponseDTO toDTO(Gasto gasto);
+
+    default ListaGastosResponseDTO toListResponseDTO(List<Gasto> gastos) {
+        List<GastoResponseDTO> dtos = gastos.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+        return new ListaGastosResponseDTO(dtos);
+    }
 
     void updateEntityFromDTO(AtualizarGastoDTO gastoDTO, @MappingTarget Gasto gasto) ;
 
