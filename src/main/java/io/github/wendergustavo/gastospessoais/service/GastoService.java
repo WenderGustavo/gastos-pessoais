@@ -1,9 +1,7 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 
-import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.*;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.GastoNaoEncontradoException;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -87,6 +86,11 @@ public class GastoService {
                         .orElseThrow(() -> new GastoNaoEncontradoException(id));
 
         gastoRepository.delete(gasto);
+    }
+
+    public ListaGastosResponseDTO buscarTodosGastos() {
+        List<Gasto> gastos = gastoRepository.findAll();
+        return gastoMapper.toListResponseDTO(gastos);
     }
 
 }
