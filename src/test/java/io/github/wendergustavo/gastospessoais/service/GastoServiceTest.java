@@ -3,6 +3,7 @@ package io.github.wendergustavo.gastospessoais.service;
 import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
 import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.ListaGastosResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
 import io.github.wendergustavo.gastospessoais.entity.Roles;
@@ -23,11 +24,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -71,10 +76,10 @@ class GastoServiceTest {
         var gastoSalvo = new Gasto();
         var response = new GastoResponseDTO(UUID.randomUUID(),"Almoco",GastoTipo.ALIMENTACAO,BigDecimal.valueOf(35.0),LocalDate.now());
 
-        Mockito.when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        Mockito.when(gastoMapper.toEntity(dto)).thenReturn(gasto);
-        Mockito.when(gastoRepository.save(gasto)).thenReturn(gastoSalvo);
-        Mockito.when(gastoMapper.toDTO(gastoSalvo)).thenReturn(response);
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(gastoMapper.toEntity(dto)).thenReturn(gasto);
+        when(gastoRepository.save(gasto)).thenReturn(gastoSalvo);
+        when(gastoMapper.toDTO(gastoSalvo)).thenReturn(response);
 
         var result = gastoService.salvar(dto);
 
@@ -87,8 +92,8 @@ class GastoServiceTest {
         assertThat(result.valor()).isEqualByComparingTo(BigDecimal.valueOf(35.0));
 
 
-        Mockito.verify(gastoValidator).validar(gasto);
-        Mockito.verify(gastoRepository).save(gasto);
+        verify(gastoValidator).validar(gasto);
+        verify(gastoRepository).save(gasto);
 
     }
 
@@ -110,7 +115,7 @@ class GastoServiceTest {
                 LocalDate.now(),
                 usuario.getId());
 
-        Mockito.when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.empty());
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> gastoService.salvar(dto))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -133,8 +138,8 @@ class GastoServiceTest {
         );
 
         var gasto = new Gasto();
-        Mockito.when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        Mockito.when(gastoMapper.toEntity(dto)).thenReturn(gasto);
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(gastoMapper.toEntity(dto)).thenReturn(gasto);
 
         Mockito.doThrow(new CampoInvalidoException("valor", "Value must be greater than zero."))
                 .when(gastoValidator).validar(gasto);
@@ -159,8 +164,8 @@ class GastoServiceTest {
         );
 
         var gasto = new Gasto();
-        Mockito.when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        Mockito.when(gastoMapper.toEntity(dto)).thenReturn(gasto);
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(gastoMapper.toEntity(dto)).thenReturn(gasto);
 
         Mockito.doThrow(new CampoInvalidoException("data", "Expenditure date cannot be in the future."))
                 .when(gastoValidator).validar(gasto);
@@ -193,8 +198,8 @@ class GastoServiceTest {
         var gasto = new Gasto();
         var gastoDTO = new GastoResponseDTO(id, "Almoço", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(30), LocalDate.now());
 
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
-        Mockito.when(gastoMapper.toDTO(gasto)).thenReturn(gastoDTO);
+        when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
+        when(gastoMapper.toDTO(gasto)).thenReturn(gastoDTO);
 
         var result = gastoService.buscarPorId(id);
 
@@ -203,14 +208,14 @@ class GastoServiceTest {
                 .extracting(GastoResponseDTO::descricao)
                 .isEqualTo("Almoço");
 
-        Mockito.verify(gastoRepository).findById(id);
+        verify(gastoRepository).findById(id);
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao buscar gasto inexistente")
     void deveLancarExcecaoAoBuscarGastoInexistente() {
         var id = UUID.randomUUID();
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.empty());
+        when(gastoRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> gastoService.buscarPorId(id))
                 .isInstanceOf(GastoNaoEncontradoException.class)
@@ -233,8 +238,8 @@ class GastoServiceTest {
         var gastoAtualizado = new GastoResponseDTO(id, "Mercado", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
         var atualizarDTO = new AtualizarGastoDTO("Mercado",GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
 
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.of(gastoExistente));
-        Mockito.when(gastoMapper.toDTO(gastoExistente)).thenReturn(gastoAtualizado);
+        when(gastoRepository.findById(id)).thenReturn(Optional.of(gastoExistente));
+        when(gastoMapper.toDTO(gastoExistente)).thenReturn(gastoAtualizado);
 
         var result = gastoService.atualizar(id, atualizarDTO);
 
@@ -243,8 +248,8 @@ class GastoServiceTest {
                 .extracting(GastoResponseDTO::descricao)
                 .isEqualTo("Mercado");
 
-        Mockito.verify(gastoRepository).save(gastoExistente);
-        Mockito.verify(gastoValidator).validar(gastoExistente);
+        verify(gastoRepository).save(gastoExistente);
+        verify(gastoValidator).validar(gastoExistente);
     }
     @Test
     @DisplayName("Deve lançar exceção ao atualizar gasto inexistente")
@@ -252,7 +257,7 @@ class GastoServiceTest {
         var id = UUID.randomUUID();
         var atualizarDTO = new AtualizarGastoDTO("Aluguel", GastoTipo.MORADIA, BigDecimal.valueOf(800), LocalDate.now());
 
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.empty());
+        when(gastoRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> gastoService.atualizar(id, atualizarDTO))
                 .isInstanceOf(GastoNaoEncontradoException.class)
@@ -275,11 +280,11 @@ class GastoServiceTest {
         var id = UUID.randomUUID();
         var gasto = new Gasto();
 
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
+        when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
 
         gastoService.deletar(id);
 
-        Mockito.verify(gastoRepository).delete(gasto);
+        verify(gastoRepository).delete(gasto);
     }
 
 
@@ -287,7 +292,7 @@ class GastoServiceTest {
     @DisplayName("Deve lançar exceção ao deletar gasto inexistente")
     void deveLancarExcecaoAoDeletarGastoInexistente() {
         var id = UUID.randomUUID();
-        Mockito.when(gastoRepository.findById(id)).thenReturn(Optional.empty());
+        when(gastoRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> gastoService.deletar(id))
                 .isInstanceOf(GastoNaoEncontradoException.class)
@@ -302,26 +307,28 @@ class GastoServiceTest {
                 .hasMessageContaining("Gasto ID must not be null");
     }
 
+    @Test
+    void deveBuscarTodosOsGastosComSucesso() {
 
+        List<Gasto> listaDeGastos = List.of(
+                new Gasto(),
+                new Gasto()
+        );
 
+        ListaGastosResponseDTO responseDTO = new ListaGastosResponseDTO(List.of());
 
+        when(gastoRepository.findAll()).thenReturn(listaDeGastos);
 
+        when(gastoMapper.toListResponseDTO(listaDeGastos)).thenReturn(responseDTO);
 
+        ListaGastosResponseDTO resultado = gastoService.buscarTodosGastos();
 
+        assertNotNull(resultado);
+        assertEquals(responseDTO, resultado);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        verify(gastoRepository, times(1)).findAll();
+        verify(gastoMapper, times(1)).toListResponseDTO(listaDeGastos);
+    }
 
 
 }
