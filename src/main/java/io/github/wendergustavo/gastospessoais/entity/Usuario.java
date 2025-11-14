@@ -32,7 +32,7 @@ public class Usuario {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20,nullable = false )
+    @Column(name =" role" ,length= 20,nullable = false )
     private Roles role;
 
     @OneToMany(mappedBy = "usuario")
