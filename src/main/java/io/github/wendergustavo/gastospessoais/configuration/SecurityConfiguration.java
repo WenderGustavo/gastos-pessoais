@@ -4,7 +4,6 @@ import io.github.wendergustavo.gastospessoais.security.CustomUserDetailsService;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
     @Bean
@@ -27,12 +26,7 @@ public class SecurityConfiguration {
                     configurer.loginPage("/login");
                 })
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/login/**").permitAll()
-                            .requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll()
-                            .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/usuarios/**").hasRole("ADMIN")
-                            .requestMatchers("/gastos").hasAnyRole("USER","ADMIN");
-
+                    authorize.requestMatchers("/login/**").permitAll();
                     authorize.anyRequest().authenticated();
                 })
                 .build();
