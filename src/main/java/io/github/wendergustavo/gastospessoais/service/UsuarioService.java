@@ -23,21 +23,21 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioService {
+public class  UsuarioService {
 
     private final UsuarioRepository  usuarioRepository;
     private final UsuarioValidator usuarioValidator;
     private final UsuarioMapper usuarioMapper;
     private final GastoRepository gastoRepository;
     private final GastoMapper gastoMapper;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioDTO usuarioDTO){
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
-        var senha = usuario.getSenha();
-        usuario.setSenha(encoder.encode(senha));
         usuarioValidator.validar(usuario);
+        String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaCriptografada);
         Usuario salvo = usuarioRepository.save(usuario);
         return usuarioMapper.toResponseDTO(salvo);
     }
@@ -68,7 +68,7 @@ public class UsuarioService {
 
         if (usuarioDTO.senha() != null && !usuarioDTO.senha().isBlank()
                 && !usuarioExistente.getSenha().equals(usuarioDTO.senha())) {
-            usuarioExistente.setSenha(encoder.encode(usuarioDTO.senha()));
+            usuarioExistente.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
         }
 
         usuarioValidator.validar(usuarioExistente);
