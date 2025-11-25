@@ -15,8 +15,7 @@ import java.time.ZoneId;
 @Service
 public class JwtService {
 
-    @Value
-            ("${security.jwt.secret-key:segredo-padrao-se-nao-tiver-no-properties}")
+    @Value("${security.jwt.secret-key:segredo-padrao-se-nao-tiver-no-properties}")
     private String secretKey;
 
     public String gerarToken(Usuario usuario) {
@@ -29,7 +28,6 @@ public class JwtService {
                 .withExpiresAt(gerarDataExpiracao())
                 .sign(algorithm);
     }
-
 
     public String validarToken(String token) {
         try {
@@ -45,7 +43,6 @@ public class JwtService {
 
     private Instant gerarDataExpiracao() {
         return LocalDateTime.now().plusHours(8).atZone(ZoneId.systemDefault()).toInstant();
-
 
     }
 
