@@ -26,5 +26,5 @@ public interface UsuarioMapper {
         return new ListaUsuarioResponseDTO(dtos);
     }
 
-    void updateEntityFromDTO(AtualizarUsuarioDTO usuarioDTO, @MappingTarget Usuario usuario);
+    void updateEntityFromDTO(AtualizarUsuarioDTO atualizarUsuarioDTO, @MappingTarget Usuario usuario);
 }
