@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.dto;
+package io.github.wendergustavo.gastospessoais.dto.usuario;
 
 import io.github.wendergustavo.gastospessoais.entity.Roles;
 import jakarta.validation.constraints.Email;

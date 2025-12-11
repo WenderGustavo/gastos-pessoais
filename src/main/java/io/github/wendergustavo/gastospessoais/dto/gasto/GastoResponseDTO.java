@@ -1,4 +1,4 @@
-package io.github.wendergustavo.gastospessoais.dto;
+package io.github.wendergustavo.gastospessoais.dto.gasto;
 
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
 
