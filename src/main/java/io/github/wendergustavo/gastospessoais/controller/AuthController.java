@@ -1,14 +1,14 @@
 package io.github.wendergustavo.gastospessoais.controller;
 
-import io.github.wendergustavo.gastospessoais.dto.LoginDTO;
-import io.github.wendergustavo.gastospessoais.dto.TokenDTO;
-import io.github.wendergustavo.gastospessoais.entity.Usuario;
-import io.github.wendergustavo.gastospessoais.security.JwtService;
-import io.github.wendergustavo.gastospessoais.service.UsuarioService;
+import io.github.wendergustavo.gastospessoais.dto.auth.LoginDTO;
+import io.github.wendergustavo.gastospessoais.dto.auth.TokenDTO;
+import io.github.wendergustavo.gastospessoais.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,21 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "Operações relacionadas ao login do usuario")
+
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final UsuarioService usuarioService; // Vamos precisar buscar o usuário real
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        Usuario usuario = usuarioService.obterPorEmail(data.email());
-
-        String token = jwtService.gerarToken(usuario);
-
-        return ResponseEntity.ok(new TokenDTO(token));
+    @Operation(summary = "Realiza login e retorna o token JWT")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+    })
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO dto) {
+        TokenDTO token = authService.login(dto);
+        return ResponseEntity.ok(token);
     }
 }
