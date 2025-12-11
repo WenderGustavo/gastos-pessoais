@@ -37,6 +37,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioDTO usuarioDTO){
+
         log.info("Criando novo usuário: email={}", usuarioDTO.email());
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuarioValidator.validar(usuario);
@@ -49,6 +50,7 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public UsuarioResponseDTO buscarPorId(UUID id){
+
         log.info("Buscando usuário por id={}", id);
         if(id == null){
             log.error("ID informado é nulo");
@@ -65,6 +67,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO usuarioDTO){
+
         log.info("Atualizando usuário: id={}", id);
         if(id == null){
             log.error("ID informado é nulo");
@@ -95,18 +98,24 @@ public class UsuarioService {
 
     @Transactional
     public void deletar(UUID id){
+
         log.info("Deletando usuário: id={}", id);
+
         if(id == null){
             log.error("ID informado é nulo");
+
             throw new IllegalArgumentException(id + "User ID must not be null.");
         }
         Usuario usuario = usuarioRepository.findById(id)
+
                 .orElseThrow(() -> {
+
                     log.warn("Usuário não encontrado para deleção: id={}", id);
                     return new UsuarioIdNaoEncontradoException(id);
                 });
 
         if(possuiGasto(usuario)){
+
             log.warn("Tentativa de deletar usuário com gastos: id={}", id);
             throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
         }
@@ -117,8 +126,10 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public List<GastoResponseDTO> listarGastosPorEmail(String email) {
+
         log.info("Listando gastos para email={}", email);
         if (email == null || email.isBlank()) {
+
             log.error("Email informado é nulo ou vazio");
             throw new IllegalArgumentException("Email must not be null or empty");
         }
@@ -130,16 +141,23 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public ListaUsuarioResponseDTO buscarTodosUsuarios() {
+
         log.info("Listando todos os usuários");
+
         List<Usuario> usuarios = usuarioRepository.findAll();
+
         log.info("Total de usuários encontrados={}", usuarios.size());
+
         return usuarioMapper.toListResponseDTO(usuarios);
     }
 
     @Transactional(readOnly = true)
     public Usuario obterPorEmail(String email){
+
         log.info("Buscando usuário por email={}", email);
+
         if (email == null || email.isBlank()){
+
             log.error("Email informado é nulo ou vazio");
             throw new IllegalArgumentException("Email must not be null or empty");
         }
