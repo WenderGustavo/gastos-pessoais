@@ -21,6 +21,12 @@ public interface GastoRepository extends JpaRepository<Gasto, UUID> {
             LocalDate dataGasto,
             Usuario usuario
     );
+
+    boolean existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuarioAndIdNot(
+            String descricao, GastoTipo gastoTipo, BigDecimal valor,
+            LocalDate dataGasto, Usuario usuario, UUID id
+    );
     List<Gasto> findByUsuarioEmailOrderByDataGastoDesc(String email);
 
+    List<Gasto> findByUsuarioId(UUID id);
 }
