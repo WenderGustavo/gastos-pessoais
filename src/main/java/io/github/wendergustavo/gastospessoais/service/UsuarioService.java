@@ -69,10 +69,12 @@ public class UsuarioService {
     public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO usuarioDTO){
 
         log.info("Atualizando usuário: id={}", id);
+
         if(id == null){
             log.error("ID informado é nulo");
             throw  new IllegalArgumentException(id + "User ID must not be null.");
         }
+
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Usuário não encontrado para atualização: id={}", id);
@@ -87,9 +89,6 @@ public class UsuarioService {
         }
 
         usuarioValidator.validar(usuarioExistente);
-
-        String senhaCriptografada = passwordEncoder.encode(usuarioExistente.getSenha());
-        usuarioExistente.setSenha(senhaCriptografada);
 
         Usuario salvo = usuarioRepository.save(usuarioExistente);
         log.info("Usuário atualizado com sucesso: id={}", salvo.getId());

@@ -83,7 +83,7 @@ class GastoServiceTest {
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
         when(gastoMapper.toEntity(dto)).thenReturn(gasto);
         when(gastoRepository.save(gasto)).thenReturn(gastoSalvo);
-        when(gastoMapper.toDTO(gastoSalvo)).thenReturn(response);
+        when(gastoMapper.toDTO(any(Gasto.class))).thenReturn(response);
 
         GastoResponseDTO result = gastoService.salvar(dto);
 
