@@ -9,6 +9,7 @@ import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class UsuarioController implements GenericController {
 
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
 
         UsuarioResponseDTO usuarioResponseDTO = usuarioService.salvar(dto);
@@ -31,6 +33,7 @@ public class UsuarioController implements GenericController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable("id") UUID id){
 
@@ -60,6 +63,7 @@ public class UsuarioController implements GenericController {
         return ResponseEntity.ok(gastos);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<ListaUsuarioResponseDTO> listarUsuarios() {
         ListaUsuarioResponseDTO usuarios = usuarioService.buscarTodosUsuarios();

@@ -10,7 +10,7 @@ import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
-import io.github.wendergustavo.gastospessoais.exceptions.UsuarioNaoEncontradoException;
+import io.github.wendergustavo.gastospessoais.exceptions.UsuarioIdNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,8 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
@@ -49,6 +49,9 @@ class UsuarioServiceTest {
     private GastoMapper gastoMapper;
 
     @Mock
+    private PasswordEncoder encoder;
+
+    @Mock
     private ListaUsuarioResponseDTO listaUsuarioResponseDTO;
 
     @Mock
@@ -60,13 +63,22 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve salvar um usuário com sucesso")
     void deveSalvarUmUsuarioComSucesso() {
-        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789",Roles.USER);
+        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789", Roles.USER);
+
         var usuario = new Usuario();
+        usuario.setSenha("123456789");
+
         var usuarioSalvo = new Usuario();
-        var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com",Roles.USER);
+        usuarioSalvo.setSenha("senhaEncriptada");
+
+        var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com", Roles.USER);
 
         when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
+
+        when(encoder.encode("123456789")).thenReturn("senhaEncriptada");
+
         when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
+
         when(usuarioMapper.toResponseDTO(usuarioSalvo)).thenReturn(response);
 
         var result = usuarioService.salvar(dto);
@@ -77,8 +89,14 @@ class UsuarioServiceTest {
                 .isEqualTo("teste@gmail.com");
 
         verify(usuarioValidator).validar(usuario);
+
+        assertThat(usuario.getSenha()).isEqualTo("senhaEncriptada");
+
         verify(usuarioRepository).save(usuario);
+
+        verify(encoder).encode("123456789");
     }
+
 
     @Test
     @DisplayName("Deve lançar exceção ao tentar salvar usuário inválido")
@@ -119,7 +137,7 @@ class UsuarioServiceTest {
         when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.buscarPorId(id))
-                .isInstanceOf(UsuarioNaoEncontradoException.class);
+                .isInstanceOf(UsuarioIdNaoEncontradoException.class);
     }
 
     @Test
@@ -130,41 +148,42 @@ class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar um usuário com sucesso")
-    void deveAtualizarUsuarioComSucesso() {
-        var id = UUID.randomUUID();
-        var dto = new UsuarioDTO("Novo Nome", "novo@email.com", "novaSenha123",Roles.USER);
-        var usuarioExistente = new Usuario(id, "Antigo", "antigo@email.com", "senha123", Roles.USER,null);
-        var usuarioAtualizado = new Usuario(id, "Novo Nome", "novo@email.com", "novaSenha123",Roles.USER, null);
-        var response = new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com",Roles.USER);
+    @DisplayName("Deve atualizar um usuário e encodar nova senha quando alterada")
+    void deveAtualizarUsuarioComSenhaAlterada() {
+        UUID id = UUID.randomUUID();
+
+        var dto = new UsuarioDTO("Novo Nome", "novo@email.com",
+                "senhaNova123", Roles.USER);
+
+        var usuarioExistente = new Usuario();
+        usuarioExistente.setId(id);
+        usuarioExistente.setNome("Antigo Nome");
+        usuarioExistente.setEmail("antigo@email.com");
+        usuarioExistente.setSenha("senhaAntigaHASH");
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
+        when(encoder.encode("senhaNova123")).thenReturn("senhaNovaHASH");
 
-        Mockito.doAnswer(invocation -> {
-            UsuarioDTO dtoArg = invocation.getArgument(0);
-            Usuario usuarioArg = invocation.getArgument(1);
-            usuarioArg.setNome(dtoArg.nome());
-            usuarioArg.setEmail(dtoArg.email());
-            usuarioArg.setSenha(dtoArg.senha());
-            return null;
-        }).when(usuarioMapper).updateEntityFromDTO(dto, usuarioExistente);
+        var usuarioSalvo = new Usuario();
+        usuarioSalvo.setId(id);
+        usuarioSalvo.setNome("Novo Nome");
+        usuarioSalvo.setEmail("novo@email.com");
+        usuarioSalvo.setSenha("senhaNovaHASH");
 
-        when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioAtualizado);
-        when(usuarioMapper.toResponseDTO(usuarioAtualizado)).thenReturn(response);
+        when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioSalvo);
+        when(usuarioMapper.toResponseDTO(usuarioSalvo))
+                .thenReturn(new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com", Roles.USER));
 
         var result = usuarioService.atualizar(id, dto);
 
-        assertThat(result)
-                .isNotNull()
-                .extracting(UsuarioResponseDTO::nome)
-                .isEqualTo("Novo Nome");
+        assertThat(result).isNotNull();
+        assertThat(result.email()).isEqualTo("novo@email.com");
 
-        verify(usuarioRepository).findById(id);
-        verify(usuarioMapper).updateEntityFromDTO(dto, usuarioExistente);
-        verify(usuarioValidator).validar(usuarioExistente);
+        verify(encoder).encode("senhaNova123");
+
         verify(usuarioRepository).save(usuarioExistente);
-        verify(usuarioMapper).toResponseDTO(usuarioAtualizado);
     }
+
     @Test
     @DisplayName("Deve lançar exceção se o ID for nulo")
     void deveLancarExcecaoSeIdForNulo() {
@@ -183,8 +202,40 @@ class UsuarioServiceTest {
         when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.atualizar(id, usuarioDTO))
-                .isInstanceOf(UsuarioNaoEncontradoException.class);
+                .isInstanceOf(UsuarioIdNaoEncontradoException.class);
     }
+
+    @Test
+    @DisplayName("Não deve encodar senha se ela não foi alterada")
+    void naoDeveEncodarSenhaQuandoNaoAlterada() {
+
+        UUID id = UUID.randomUUID();
+
+        var dto = new UsuarioDTO("Wender", "teste@gmail.com",
+                "senhaAntigaHASH", Roles.USER); // mesma senha
+
+        var usuarioExistente = new Usuario();
+        usuarioExistente.setId(id);
+        usuarioExistente.setNome("Wender");
+        usuarioExistente.setEmail("teste@gmail.com");
+        usuarioExistente.setSenha("senhaAntigaHASH"); // igual
+
+        when(usuarioRepository.findById(id))
+                .thenReturn(Optional.of(usuarioExistente));
+
+        when(usuarioRepository.save(usuarioExistente))
+                .thenReturn(usuarioExistente);
+
+        when(usuarioMapper.toResponseDTO(usuarioExistente))
+                .thenReturn(new UsuarioResponseDTO(id, "Wender", "teste@gmail.com", Roles.USER));
+
+        var result = usuarioService.atualizar(id, dto);
+
+        assertThat(result).isNotNull();
+
+        verify(encoder, never()).encode(anyString());
+    }
+
 
     @Test
     @DisplayName("Deve deletar usuário sem gastos com sucesso")
@@ -221,7 +272,7 @@ class UsuarioServiceTest {
         when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.deletar(id))
-                .isInstanceOf(UsuarioNaoEncontradoException.class);
+                .isInstanceOf(UsuarioIdNaoEncontradoException.class);
     }
 
     @Test
