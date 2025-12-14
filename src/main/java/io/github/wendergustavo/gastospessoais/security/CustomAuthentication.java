@@ -1,59 +1,57 @@
 package io.github.wendergustavo.gastospessoais.security;
-import io.github.wendergustavo.gastospessoais.entity.Usuario;
-import lombok.RequiredArgsConstructor;
+
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDetailsDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import java.util.Collection;
-import java.util.Collections;
 
+public class CustomAuthentication implements Authentication {
 
-@RequiredArgsConstructor
-public class CustomAuthentication implements Authentication
-{
+    private final UsuarioDetailsDTO usuarioDTO;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    private final Usuario usuario;
     private boolean authenticated;
 
-
-    @Override public Collection<? extends GrantedAuthority> getAuthorities()
-    {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()));
+    public CustomAuthentication(UsuarioDetailsDTO usuarioDTO, Collection<? extends GrantedAuthority> authorities) {
+        this.usuarioDTO = usuarioDTO;
+        this.authorities = authorities;
+        this.authenticated = true;
     }
-    @Override public Object getCredentials()
-    {
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public Object getCredentials() {
         return null;
     }
 
     @Override
-    public Object getDetails()
-    {
-        return usuario;
+    public Object getDetails() {
+        return usuarioDTO;
     }
 
-    @Override public Object getPrincipal()
-    {
-        return usuario;
+    @Override
+    public Object getPrincipal() {
+        return usuarioDTO;
     }
 
-    @Override public boolean isAuthenticated()
-    {
+    @Override
+    public boolean isAuthenticated() {
         return authenticated;
     }
 
     @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException
-    {
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         this.authenticated = isAuthenticated;
     }
 
-    @Override public String getName()
-    {
-        return usuario.getEmail();
+    @Override
+    public String getName() {
+        return usuarioDTO.email();
     }
 
-    public Usuario getUsuario()
-    {
-        return usuario;
-    }
 }

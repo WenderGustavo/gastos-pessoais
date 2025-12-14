@@ -1,9 +1,10 @@
 package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
 import io.github.wendergustavo.gastospessoais.entity.Roles;
@@ -152,8 +153,8 @@ class UsuarioServiceTest {
     void deveAtualizarUsuarioComSenhaAlterada() {
         UUID id = UUID.randomUUID();
 
-        var dto = new UsuarioDTO("Novo Nome", "novo@email.com",
-                "senhaNova123", Roles.USER);
+        var dto = new AtualizarUsuarioDTO("Novo Nome", "novo@email.com",
+                "senhaNova123");
 
         var usuarioExistente = new Usuario();
         usuarioExistente.setId(id);
@@ -187,7 +188,7 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção se o ID for nulo")
     void deveLancarExcecaoSeIdForNulo() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha",Roles.USER);
+        AtualizarUsuarioDTO usuarioDTO = new AtualizarUsuarioDTO("Nome", "email@email.com", "senha");
         assertThatThrownBy(() -> usuarioService.atualizar(null, usuarioDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("must not be null");
@@ -197,7 +198,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar exceção se o usuário não for encontrado")
     void deveLancarExcecaoSeUsuarioNaoForEncontrado() {
         UUID id = UUID.randomUUID();
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Nome", "email@email.com", "senha",Roles.USER);
+        AtualizarUsuarioDTO usuarioDTO = new AtualizarUsuarioDTO("Nome", "email@email.com", "senha");
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -211,14 +212,14 @@ class UsuarioServiceTest {
 
         UUID id = UUID.randomUUID();
 
-        var dto = new UsuarioDTO("Wender", "teste@gmail.com",
-                "senhaAntigaHASH", Roles.USER); // mesma senha
+        var dto = new AtualizarUsuarioDTO("Wender", "teste@gmail.com",
+                "senhaAntigaHASH");
 
         var usuarioExistente = new Usuario();
         usuarioExistente.setId(id);
         usuarioExistente.setNome("Wender");
         usuarioExistente.setEmail("teste@gmail.com");
-        usuarioExistente.setSenha("senhaAntigaHASH"); // igual
+        usuarioExistente.setSenha("senhaAntigaHASH");
 
         when(usuarioRepository.findById(id))
                 .thenReturn(Optional.of(usuarioExistente));

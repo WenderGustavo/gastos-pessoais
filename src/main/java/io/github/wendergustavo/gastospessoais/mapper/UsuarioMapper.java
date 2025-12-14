@@ -1,9 +1,10 @@
 package io.github.wendergustavo.gastospessoais.mapper;
 
 
-import io.github.wendergustavo.gastospessoais.dto.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -25,5 +26,5 @@ public interface UsuarioMapper {
         return new ListaUsuarioResponseDTO(dtos);
     }
 
-    void updateEntityFromDTO(UsuarioDTO usuarioDTO,@MappingTarget Usuario usuario);
+    void updateEntityFromDTO(AtualizarUsuarioDTO atualizarUsuarioDTO, @MappingTarget Usuario usuario);
 }

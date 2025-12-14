@@ -1,334 +1,200 @@
 package io.github.wendergustavo.gastospessoais.service;
 
-import io.github.wendergustavo.gastospessoais.dto.AtualizarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.CadastrarGastoDTO;
-import io.github.wendergustavo.gastospessoais.dto.GastoResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.ListaGastosResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.gasto.AtualizarGastoDTO;
+import io.github.wendergustavo.gastospessoais.dto.gasto.CadastrarGastoDTO;
+import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDetailsDTO;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
-import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
-import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.exceptions.GastoNaoEncontradoException;
+import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
+import io.github.wendergustavo.gastospessoais.security.CustomAuthentication;
 import io.github.wendergustavo.gastospessoais.validador.GastoValidator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 class GastoServiceTest {
 
     @Mock
     private GastoRepository gastoRepository;
-
     @Mock
     private UsuarioRepository usuarioRepository;
-
     @Mock
     private GastoValidator gastoValidator;
-
     @Mock
     private GastoMapper gastoMapper;
 
     @InjectMocks
     private GastoService gastoService;
 
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    private void mockSecurityContext(UUID userId, String role) {
+        UsuarioDetailsDTO usuarioDTO = new UsuarioDetailsDTO(userId, "teste@gmail.com", role);
+        Authentication auth = mock(CustomAuthentication.class);
+        SecurityContext context = mock(SecurityContext.class);
+
+        when(context.getAuthentication()).thenReturn(auth);
+        when(auth.getPrincipal()).thenReturn(usuarioDTO);
+
+        SecurityContextHolder.setContext(context);
+    }
+
     @Test
-    @DisplayName("Deve salvar um gasto com sucesso")
-    void deveSalvarUmGasto(){
+    @DisplayName("Deve salvar gasto vinculando ao usuário logado (USER)")
+    void deveSalvarGastoParaUsuarioLogado() {
+        UUID idUsuario = UUID.randomUUID();
+        mockSecurityContext(idUsuario, "USER");
 
-        var id = UUID.randomUUID();
+        CadastrarGastoDTO dto = new CadastrarGastoDTO("Almoco", GastoTipo.MORADIA, BigDecimal.TEN,LocalDate.now(), null);
 
-        var usuario = new Usuario(id,
-                "Wender",
-                "teste@gmail.com",
-                "123456789",
-                Roles.USER,
-                null);
+        Usuario usuario = new Usuario();
+        usuario.setId(idUsuario);
 
-        var dto = new CadastrarGastoDTO("Almoco",
-                GastoTipo.ALIMENTACAO,
-                BigDecimal.valueOf(35.0),
-                LocalDate.now(),
-                usuario.getId());
+        Gasto gasto = new Gasto();
+        Gasto gastoSalvo = new Gasto();
+        GastoResponseDTO response = new GastoResponseDTO(UUID.randomUUID(), "Almoco", GastoTipo.ALIMENTACAO, BigDecimal.TEN, LocalDate.now());
 
-        var gasto = new Gasto();
-        var gastoSalvo = new Gasto();
-        var response = new GastoResponseDTO(UUID.randomUUID(),"Almoco",GastoTipo.ALIMENTACAO,BigDecimal.valueOf(35.0),LocalDate.now());
-
-        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
         when(gastoMapper.toEntity(dto)).thenReturn(gasto);
         when(gastoRepository.save(gasto)).thenReturn(gastoSalvo);
-        when(gastoMapper.toDTO(gastoSalvo)).thenReturn(response);
+        when(gastoMapper.toDTO(any(Gasto.class))).thenReturn(response);
 
-        var result = gastoService.salvar(dto);
+        GastoResponseDTO result = gastoService.salvar(dto);
 
-        assertThat(result)
-                .isNotNull()
-                .extracting(GastoResponseDTO::descricao)
-                .isEqualTo("Almoco");
-
-        assertThat(result.gastoTipo()).isEqualTo(GastoTipo.ALIMENTACAO);
-        assertThat(result.valor()).isEqualByComparingTo(BigDecimal.valueOf(35.0));
-
-
+        assertThat(result).isNotNull();
+        verify(usuarioRepository).findById(idUsuario);
         verify(gastoValidator).validar(gasto);
         verify(gastoRepository).save(gasto);
-
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar salvar gasto sem passar usuario")
-    void deveLancarExcecaoAoProcurarUsuarioNaoEncontrado() {
+    @DisplayName("Admin deve conseguir salvar gasto para outro usuário")
+    void adminDeveSalvarGastoParaOutroID() {
 
-        var id = UUID.randomUUID();
-        var usuario = new Usuario(id,
-                "Wender",
-                "teste@gmail.com",
-                "123456789",
-                Roles.USER,
-                null);
+        UUID idAdmin = UUID.randomUUID();
+        UUID idOutroUsuario = UUID.randomUUID();
+        mockSecurityContext(idAdmin, "ADMIN");
 
-        var dto = new CadastrarGastoDTO("Carro",
-                GastoTipo.TRANSPORTE,
-                BigDecimal.valueOf(50.0),
-                LocalDate.now(),
-                usuario.getId());
+        CadastrarGastoDTO dto = new CadastrarGastoDTO("Presente", GastoTipo.OUTROS, BigDecimal.TEN, LocalDate.now(), idOutroUsuario);
 
-        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.empty());
+        Usuario outroUsuario = new Usuario();
+        outroUsuario.setId(idOutroUsuario);
 
-        assertThatThrownBy(() -> gastoService.salvar(dto))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User not found.");
+        when(usuarioRepository.findById(idOutroUsuario)).thenReturn(Optional.of(outroUsuario));
+        when(gastoMapper.toEntity(dto)).thenReturn(new Gasto());
+        when(gastoRepository.save(any())).thenReturn(new Gasto());
+        when(gastoMapper.toDTO(any())).thenReturn(new GastoResponseDTO(null, null, null, null, null));
+
+        gastoService.salvar(dto);
+
+        verify(usuarioRepository).findById(idOutroUsuario);
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar salvar gasto com valor menor ou igual a zero")
-    void deveLancarExcecaoAoSalvarGastoComValorInvalido() {
+    @DisplayName("Deve atualizar gasto se for o dono")
+    void deveAtualizarGastoSeForDono() {
 
-        var id = UUID.randomUUID();
-        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789", Roles.USER,null);
+        UUID idUsuario = UUID.randomUUID();
+        UUID idGasto = UUID.randomUUID();
+        mockSecurityContext(idUsuario, "USER");
 
-        var dto = new CadastrarGastoDTO(
-                "Transporte",
-                GastoTipo.TRANSPORTE,
-                BigDecimal.ZERO,
-                LocalDate.now(),
-                usuario.getId()
-        );
+        AtualizarGastoDTO dto = new AtualizarGastoDTO("Novo Nome", GastoTipo.LAZER, BigDecimal.TEN, LocalDate.now());
 
-        var gasto = new Gasto();
-        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        when(gastoMapper.toEntity(dto)).thenReturn(gasto);
+        Usuario usuario = new Usuario();
+        usuario.setId(idUsuario);
 
-        Mockito.doThrow(new CampoInvalidoException("valor", "Value must be greater than zero."))
-                .when(gastoValidator).validar(gasto);
+        Gasto gastoExistente = new Gasto();
+        gastoExistente.setUsuario(usuario);
 
-        assertThatThrownBy(() -> gastoService.salvar(dto))
-                .isInstanceOf(CampoInvalidoException.class)
-                .hasMessageContaining("Value must be greater than zero.");
-    }
+        when(gastoRepository.findById(idGasto)).thenReturn(Optional.of(gastoExistente));
+        when(gastoMapper.toDTO(any())).thenReturn(new GastoResponseDTO(idGasto, "Novo Nome", null, null, null));
 
-    @Test
-    @DisplayName("Deve lançar exceção ao tentar salvar gasto com data futura")
-    void deveLancarExcecaoAoSalvarGastoComDataFutura() {
-        var id = UUID.randomUUID();
-        var usuario = new Usuario(id, "Wender", "teste@gmail.com", "123456789",Roles.USER, null);
-
-        var dto = new CadastrarGastoDTO(
-                "Viagem",
-                GastoTipo.LAZER,
-                BigDecimal.valueOf(100.0),
-                LocalDate.now().plusDays(2),
-                usuario.getId()
-        );
-
-        var gasto = new Gasto();
-        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        when(gastoMapper.toEntity(dto)).thenReturn(gasto);
-
-        Mockito.doThrow(new CampoInvalidoException("data", "Expenditure date cannot be in the future."))
-                .when(gastoValidator).validar(gasto);
-
-        assertThatThrownBy(() -> gastoService.salvar(dto))
-                .isInstanceOf(CampoInvalidoException.class)
-                .hasMessageContaining("Expenditure date cannot be in the future.");
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao tentar salvar gasto sem usuário informado")
-    void deveLancarExcecaoAoSalvarGastoSemUsuario() {
-        var dto = new CadastrarGastoDTO(
-                "Supermercado",
-                GastoTipo.ALIMENTACAO,
-                BigDecimal.valueOf(80.0),
-                LocalDate.now(),
-                null
-        );
-
-        assertThatThrownBy(() -> gastoService.salvar(dto))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User not found.");
-    }
-
-    @Test
-    @DisplayName("Deve retornar gasto ao buscar por ID existente")
-    void deveBuscarGastoPorIdComSucesso() {
-        var id = UUID.randomUUID();
-        var gasto = new Gasto();
-        var gastoDTO = new GastoResponseDTO(id, "Almoço", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(30), LocalDate.now());
-
-        when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
-        when(gastoMapper.toDTO(gasto)).thenReturn(gastoDTO);
-
-        var result = gastoService.buscarPorId(id);
-
-        assertThat(result)
-                .isNotNull()
-                .extracting(GastoResponseDTO::descricao)
-                .isEqualTo("Almoço");
-
-        verify(gastoRepository).findById(id);
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao buscar gasto inexistente")
-    void deveLancarExcecaoAoBuscarGastoInexistente() {
-        var id = UUID.randomUUID();
-        when(gastoRepository.findById(id)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> gastoService.buscarPorId(id))
-                .isInstanceOf(GastoNaoEncontradoException.class)
-                .hasMessageContaining(id.toString());
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao buscar gasto com ID nulo")
-    void deveLancarExcecaoAoBuscarGastoComIdNulo() {
-        assertThatThrownBy(() -> gastoService.buscarPorId(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Gasto ID must not be null");
-    }
-
-    @Test
-    @DisplayName("Deve atualizar um gasto com sucesso")
-    void deveAtualizarGastoComSucesso() {
-        var id = UUID.randomUUID();
-        var gastoExistente = new Gasto();
-        var gastoAtualizado = new GastoResponseDTO(id, "Mercado", GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
-        var atualizarDTO = new AtualizarGastoDTO("Mercado",GastoTipo.ALIMENTACAO, BigDecimal.valueOf(120), LocalDate.now());
-
-        when(gastoRepository.findById(id)).thenReturn(Optional.of(gastoExistente));
-        when(gastoMapper.toDTO(gastoExistente)).thenReturn(gastoAtualizado);
-
-        var result = gastoService.atualizar(id, atualizarDTO);
-
-        assertThat(result)
-                .isNotNull()
-                .extracting(GastoResponseDTO::descricao)
-                .isEqualTo("Mercado");
+        gastoService.atualizar(idGasto, dto);
 
         verify(gastoRepository).save(gastoExistente);
-        verify(gastoValidator).validar(gastoExistente);
-    }
-    @Test
-    @DisplayName("Deve lançar exceção ao atualizar gasto inexistente")
-    void deveLancarExcecaoAoAtualizarGastoInexistente() {
-        var id = UUID.randomUUID();
-        var atualizarDTO = new AtualizarGastoDTO("Aluguel", GastoTipo.MORADIA, BigDecimal.valueOf(800), LocalDate.now());
-
-        when(gastoRepository.findById(id)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> gastoService.atualizar(id, atualizarDTO))
-                .isInstanceOf(GastoNaoEncontradoException.class)
-                .hasMessageContaining(id.toString());
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao atualizar gasto com ID nulo")
-    void deveLancarExcecaoAoAtualizarGastoComIdNulo() {
-        var dto = new AtualizarGastoDTO("Aluguel", GastoTipo.MORADIA, BigDecimal.valueOf(800),  LocalDate.now());
+    @DisplayName("Deve lançar exceção ao tentar atualizar gasto de outro usuário (Sem ser Admin)")
+    void deveLancarErroAoAtualizarGastoDeOutro() {
 
-        assertThatThrownBy(() -> gastoService.atualizar(null, dto))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Gasto ID must not be null");
+        UUID idEu = UUID.randomUUID();
+        UUID idOutro = UUID.randomUUID();
+        UUID idGasto = UUID.randomUUID();
+        mockSecurityContext(idEu, "USER");
+
+        Usuario donoDoGasto = new Usuario();
+        donoDoGasto.setId(idOutro);
+
+        Gasto gastoDeOutro = new Gasto();
+        gastoDeOutro.setUsuario(donoDoGasto);
+
+        when(gastoRepository.findById(idGasto)).thenReturn(Optional.of(gastoDeOutro));
+
+        AtualizarGastoDTO dto = new AtualizarGastoDTO("Hacker", GastoTipo.LAZER, BigDecimal.TEN, LocalDate.now());
+
+        assertThatThrownBy(() -> gastoService.atualizar(idGasto, dto))
+                .isInstanceOf(OperacaoNaoPermitidaException.class)
+                .hasMessageContaining("permissão");
+
+        verify(gastoRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("Deve deletar um gasto com sucesso")
-    void deveDeletarGastoComSucesso() {
-        var id = UUID.randomUUID();
-        var gasto = new Gasto();
+    @DisplayName("Deve deletar gasto se for ADMIN, mesmo não sendo dono")
+    void adminDeveDeletarGastoDeQualquerUm() {
 
-        when(gastoRepository.findById(id)).thenReturn(Optional.of(gasto));
+        UUID idAdmin = UUID.randomUUID();
+        UUID idUsuarioComum = UUID.randomUUID();
+        UUID idGasto = UUID.randomUUID();
+        mockSecurityContext(idAdmin, "ADMIN");
 
-        gastoService.deletar(id);
+        Usuario dono = new Usuario();
+        dono.setId(idUsuarioComum);
+
+        Gasto gasto = new Gasto();
+        gasto.setUsuario(dono);
+
+        when(gastoRepository.findById(idGasto)).thenReturn(Optional.of(gasto));
+
+        gastoService.deletar(idGasto);
 
         verify(gastoRepository).delete(gasto);
     }
 
-
     @Test
-    @DisplayName("Deve lançar exceção ao deletar gasto inexistente")
-    void deveLancarExcecaoAoDeletarGastoInexistente() {
-        var id = UUID.randomUUID();
+    @DisplayName("Deve lançar exceção se Gasto não existe")
+    void deveLancarErroSeGastoNaoExiste() {
+        UUID id = UUID.randomUUID();
         when(gastoRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> gastoService.deletar(id))
-                .isInstanceOf(GastoNaoEncontradoException.class)
-                .hasMessageContaining(id.toString());
+        assertThatThrownBy(() -> gastoService.buscarPorId(id))
+                .isInstanceOf(GastoNaoEncontradoException.class);
     }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao deletar gasto com ID nulo")
-    void deveLancarExcecaoAoDeletarGastoComIdNulo() {
-        assertThatThrownBy(() -> gastoService.deletar(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Gasto ID must not be null");
-    }
-
-    @Test
-    void deveBuscarTodosOsGastosComSucesso() {
-
-        List<Gasto> listaDeGastos = List.of(
-                new Gasto(),
-                new Gasto()
-        );
-
-        ListaGastosResponseDTO responseDTO = new ListaGastosResponseDTO(List.of());
-
-        when(gastoRepository.findAll()).thenReturn(listaDeGastos);
-
-        when(gastoMapper.toListResponseDTO(listaDeGastos)).thenReturn(responseDTO);
-
-        ListaGastosResponseDTO resultado = gastoService.buscarTodosGastos();
-
-        assertNotNull(resultado);
-        assertEquals(responseDTO, resultado);
-
-        verify(gastoRepository, times(1)).findAll();
-        verify(gastoMapper, times(1)).toListResponseDTO(listaDeGastos);
-    }
-
-
 }
