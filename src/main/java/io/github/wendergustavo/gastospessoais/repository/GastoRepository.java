@@ -6,7 +6,6 @@ import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,19 +13,21 @@ public interface GastoRepository extends JpaRepository<Gasto, UUID> {
 
     boolean existsByUsuario(Usuario usuario);
 
-    boolean existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+    boolean existsByDescricaoAndGastoTipoAndValorAndUsuario(
             String descricao,
             GastoTipo gastoTipo,
             BigDecimal valor,
-            LocalDate dataGasto,
             Usuario usuario
     );
 
-    boolean existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuarioAndIdNot(
-            String descricao, GastoTipo gastoTipo, BigDecimal valor,
-            LocalDate dataGasto, Usuario usuario, UUID id
+    boolean existsByDescricaoAndGastoTipoAndValorAndUsuarioAndIdNot(
+            String descricao,
+            GastoTipo gastoTipo,
+            BigDecimal valor,
+            Usuario usuario,
+            UUID id
     );
-    List<Gasto> findByUsuarioEmailOrderByDataGastoDesc(String email);
+    List<Gasto> findByUsuarioEmailOrderByCreatedAtDesc(String email);
 
     List<Gasto> findByUsuarioId(UUID id);
 }

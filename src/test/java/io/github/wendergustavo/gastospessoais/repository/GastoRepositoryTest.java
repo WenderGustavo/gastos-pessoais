@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +46,6 @@ class GastoRepositoryTest {
         gasto.setDescricao("Almoço");
         gasto.setValor(BigDecimal.valueOf(35.5));
         gasto.setGastoTipo(GastoTipo.ALIMENTACAO);
-        gasto.setDataGasto(LocalDate.now());
         gasto.setUsuario(usuario);
     }
 
@@ -131,11 +129,10 @@ class GastoRepositoryTest {
 
         Gasto gastoSalvo = gastoRepository.save(gasto);
 
-        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuario(
                 gasto.getDescricao(),
                 gasto.getGastoTipo(),
                 gasto.getValor(),
-                gasto.getDataGasto(),
                 gasto.getUsuario()
         );
 
@@ -146,11 +143,10 @@ class GastoRepositoryTest {
     @DisplayName("Deve retornar false quando não existir gasto com os campos informados")
     void deveRetornarFalseQuandoGastoNaoExistir() {
 
-        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+        boolean existe = gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuario(
                 "Café",
                 GastoTipo.ALIMENTACAO,
                 BigDecimal.valueOf(10),
-                LocalDate.now(),
                 usuario
         );
 

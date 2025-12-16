@@ -312,7 +312,7 @@ class UsuarioServiceTest {
         gastoEntity.setDescricao("Almoço");
         gastoEntity.setGastoTipo(GastoTipo.ALIMENTACAO);
         gastoEntity.setValor(BigDecimal.valueOf(35.0));
-        gastoEntity.setDataGasto(LocalDate.now());
+        gastoEntity.getCreatedAt();
         gastoEntity.setUsuario(usuario);
 
         var gastoDTO = new GastoResponseDTO(
@@ -320,10 +320,11 @@ class UsuarioServiceTest {
                 "Almoço",
                 GastoTipo.ALIMENTACAO,
                 BigDecimal.valueOf(35.0),
-                LocalDate.now()
+                LocalDate.now(),
+                null
         );
 
-        when(gastoRepository.findByUsuarioEmailOrderByDataGastoDesc(email))
+        when(gastoRepository.findByUsuarioEmailOrderByCreatedAtDesc(email))
                 .thenReturn(List.of(gastoEntity));
 
         when(gastoMapper.toDTO(gastoEntity)).thenReturn(gastoDTO);
@@ -335,7 +336,7 @@ class UsuarioServiceTest {
                 .hasSize(1)
                 .containsExactly(gastoDTO);
 
-        verify(gastoRepository).findByUsuarioEmailOrderByDataGastoDesc(email);
+        verify(gastoRepository).findByUsuarioEmailOrderByCreatedAtDesc(email);
         verify(gastoMapper).toDTO(gastoEntity);
     }
 

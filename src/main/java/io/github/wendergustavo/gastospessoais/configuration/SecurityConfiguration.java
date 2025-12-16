@@ -48,6 +48,7 @@ public class SecurityConfiguration {
             "/swagger-ui/swagger-initializer.js",
             "/health",
             "/actuator/health",
+            "/actuator/prometheus",
 
             "/auth/login",
             "/auth/**"
@@ -62,7 +63,7 @@ public class SecurityConfiguration {
 
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/usuarios").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
 
                         .anyRequest().authenticated()
                 )

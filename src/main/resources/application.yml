@@ -12,14 +12,23 @@ spring:
       ddl-auto: validate
     properties:
       hibernate.format_sql: true
-    flyway:
-      enabled: true
+  flyway:
+    enabled: true
+
 security:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
     expiration: 3600000
 
-
-
-
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true

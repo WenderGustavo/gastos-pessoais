@@ -12,7 +12,8 @@ public record GastoResponseDTO(
         String descricao,
         GastoTipo gastoTipo,
         BigDecimal valor,
-        LocalDate dataGasto
+        LocalDate createdAt,
+        LocalDate updatedAt
 
 ) {
 }

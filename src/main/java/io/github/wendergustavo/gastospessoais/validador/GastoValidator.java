@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Component
@@ -26,47 +25,38 @@ public class GastoValidator {
             throw new CampoInvalidoException("usuario", "User not found or not informed.");
         }
 
-        if (!dataValida(gasto)) {
-            throw new CampoInvalidoException("data", "Expenditure date cannot be in the future.");
-        }
-
         if (!validarGastoDuplicado(gasto)) {
-            throw new RegistroDuplicadoException("Duplicate spending is not allowed");
+            throw new RegistroDuplicadoException("Duplicate spending is not allowed.");
         }
     }
 
     private boolean validarValorPositivo(Gasto gasto) {
-        return gasto != null && gasto.getValor() != null && gasto.getValor().compareTo(BigDecimal.ZERO) > 0;
+        return gasto != null
+                && gasto.getValor() != null
+                && gasto.getValor().compareTo(BigDecimal.ZERO) > 0;
     }
 
     private boolean validarUsuarioPreenchido(Gasto gasto) {
-        return gasto.getUsuario() != null && gasto.getUsuario().getId() != null;
-    }
-
-    private boolean dataValida(Gasto gasto) {
-        return gasto.getDataGasto() != null && !gasto.getDataGasto().isAfter(LocalDate.now());
+        return gasto.getUsuario() != null
+                && gasto.getUsuario().getId() != null;
     }
 
     private boolean validarGastoDuplicado(Gasto gasto) {
 
         if (gasto.getId() != null) {
-
-            return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuarioAndIdNot(
+            return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuarioAndIdNot(
                     gasto.getDescricao(),
                     gasto.getGastoTipo(),
                     gasto.getValor(),
-                    gasto.getDataGasto(),
                     gasto.getUsuario(),
                     gasto.getId()
             );
         }
 
-
-        return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndDataGastoAndUsuario(
+        return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuario(
                 gasto.getDescricao(),
                 gasto.getGastoTipo(),
                 gasto.getValor(),
-                gasto.getDataGasto(),
                 gasto.getUsuario()
         );
     }

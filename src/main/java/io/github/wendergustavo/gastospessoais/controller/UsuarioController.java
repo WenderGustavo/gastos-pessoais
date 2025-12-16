@@ -30,7 +30,7 @@ public class UsuarioController implements GenericController {
     private final UsuarioService usuarioService;
 
 
-    @PostMapping @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping
     @Operation(summary = "Salva um novo usuario", description = "Cadastra um novo usuário. Apenas ADMINs podem executar esta operação.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
