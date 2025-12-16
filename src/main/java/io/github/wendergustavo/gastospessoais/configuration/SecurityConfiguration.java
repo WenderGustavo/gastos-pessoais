@@ -48,6 +48,7 @@ public class SecurityConfiguration {
             "/swagger-ui/swagger-initializer.js",
             "/health",
             "/actuator/health",
+            "/actuator/prometheus",
 
             "/auth/login",
             "/auth/**"
