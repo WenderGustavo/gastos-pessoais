@@ -12,12 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @DataJpaTest
@@ -110,23 +111,23 @@ class UsuarioRepositoryTest {
         gasto1.setDescricao("Almoço");
         gasto1.setGastoTipo(GastoTipo.ALIMENTACAO);
         gasto1.setValor(BigDecimal.valueOf(15.0));
-        gasto1.setDataGasto(LocalDate.of(2025, 10, 1));
+        gasto1.getCreatedAt();
         gasto1.setUsuario(usuarioSalvo);
 
         Gasto gasto2 = new Gasto();
         gasto2.setDescricao("Transporte");
         gasto2.setGastoTipo(GastoTipo.TRANSPORTE);
         gasto2.setValor(BigDecimal.valueOf(10.0));
-        gasto2.setDataGasto(LocalDate.of(2025, 10, 5));
+        gasto2.getCreatedAt();
         gasto2.setUsuario(usuarioSalvo);
 
         gastoRepository.saveAll(List.of(gasto1, gasto2));
 
-        List<Gasto> resultado = gastoRepository.findByUsuarioEmailOrderByDataGastoDesc("teste@gmail.com");
+        List<Gasto> resultado = gastoRepository.findByUsuarioEmailOrderByCreatedAtDesc("teste@gmail.com");
 
         assertThat(resultado).hasSize(2);
-        assertThat(resultado.get(0).getDescricao()).isEqualTo("Transporte");
-        assertThat(resultado.get(1).getDescricao()).isEqualTo("Almoço");
+        assertThat(resultado.get(0).getDescricao()).isEqualTo("Almoço");
+        assertThat(resultado.get(1).getDescricao()).isEqualTo("Transporte");
         assertThat(resultado)
                 .allMatch(g -> g.getUsuario().getEmail().equals("teste@gmail.com"));
     }

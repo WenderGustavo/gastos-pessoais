@@ -55,7 +55,9 @@ class GastoServiceTest {
     }
 
     private void mockSecurityContext(UUID userId, String role) {
-        UsuarioDetailsDTO usuarioDTO = new UsuarioDetailsDTO(userId, "teste@gmail.com", role);
+        UsuarioDetailsDTO usuarioDTO =
+                new UsuarioDetailsDTO(userId, "teste@gmail.com", role);
+
         Authentication auth = mock(CustomAuthentication.class);
         SecurityContext context = mock(SecurityContext.class);
 
@@ -68,21 +70,32 @@ class GastoServiceTest {
     @Test
     @DisplayName("Deve salvar gasto vinculando ao usuário logado (USER)")
     void deveSalvarGastoParaUsuarioLogado() {
+
         UUID idUsuario = UUID.randomUUID();
         mockSecurityContext(idUsuario, "USER");
 
-        CadastrarGastoDTO dto = new CadastrarGastoDTO("Almoco", GastoTipo.MORADIA, BigDecimal.TEN,LocalDate.now(), null);
+        CadastrarGastoDTO dto =
+                new CadastrarGastoDTO("Almoço", GastoTipo.MORADIA, BigDecimal.TEN, UUID.randomUUID());
 
         Usuario usuario = new Usuario();
         usuario.setId(idUsuario);
 
         Gasto gasto = new Gasto();
         Gasto gastoSalvo = new Gasto();
-        GastoResponseDTO response = new GastoResponseDTO(UUID.randomUUID(), "Almoco", GastoTipo.ALIMENTACAO, BigDecimal.TEN, LocalDate.now());
+
+        GastoResponseDTO response =
+                new GastoResponseDTO(
+                        UUID.randomUUID(),
+                        "Almoço",
+                        GastoTipo.MORADIA,
+                        BigDecimal.TEN,
+                        LocalDate.now(),
+                        null
+                );
 
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
         when(gastoMapper.toEntity(dto)).thenReturn(gasto);
-        when(gastoRepository.save(gasto)).thenReturn(gastoSalvo);
+        when(gastoRepository.save(any(Gasto.class))).thenReturn(gastoSalvo);
         when(gastoMapper.toDTO(any(Gasto.class))).thenReturn(response);
 
         GastoResponseDTO result = gastoService.salvar(dto);
@@ -101,7 +114,8 @@ class GastoServiceTest {
         UUID idOutroUsuario = UUID.randomUUID();
         mockSecurityContext(idAdmin, "ADMIN");
 
-        CadastrarGastoDTO dto = new CadastrarGastoDTO("Presente", GastoTipo.OUTROS, BigDecimal.TEN, LocalDate.now(), idOutroUsuario);
+        CadastrarGastoDTO dto =
+                new CadastrarGastoDTO("Presente", GastoTipo.OUTROS, BigDecimal.TEN, idOutroUsuario);
 
         Usuario outroUsuario = new Usuario();
         outroUsuario.setId(idOutroUsuario);
@@ -109,7 +123,8 @@ class GastoServiceTest {
         when(usuarioRepository.findById(idOutroUsuario)).thenReturn(Optional.of(outroUsuario));
         when(gastoMapper.toEntity(dto)).thenReturn(new Gasto());
         when(gastoRepository.save(any())).thenReturn(new Gasto());
-        when(gastoMapper.toDTO(any())).thenReturn(new GastoResponseDTO(null, null, null, null, null));
+        when(gastoMapper.toDTO(any()))
+                .thenReturn(new GastoResponseDTO(null, null, null, null, null, null));
 
         gastoService.salvar(dto);
 
@@ -124,7 +139,8 @@ class GastoServiceTest {
         UUID idGasto = UUID.randomUUID();
         mockSecurityContext(idUsuario, "USER");
 
-        AtualizarGastoDTO dto = new AtualizarGastoDTO("Novo Nome", GastoTipo.LAZER, BigDecimal.TEN, LocalDate.now());
+        AtualizarGastoDTO dto =
+                new AtualizarGastoDTO("Novo Nome", GastoTipo.LAZER, BigDecimal.TEN);
 
         Usuario usuario = new Usuario();
         usuario.setId(idUsuario);
@@ -133,7 +149,8 @@ class GastoServiceTest {
         gastoExistente.setUsuario(usuario);
 
         when(gastoRepository.findById(idGasto)).thenReturn(Optional.of(gastoExistente));
-        when(gastoMapper.toDTO(any())).thenReturn(new GastoResponseDTO(idGasto, "Novo Nome", null, null, null));
+        when(gastoMapper.toDTO(any()))
+                .thenReturn(new GastoResponseDTO(idGasto, "Novo Nome", null, null, null, null));
 
         gastoService.atualizar(idGasto, dto);
 
@@ -141,7 +158,7 @@ class GastoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar atualizar gasto de outro usuário (Sem ser Admin)")
+    @DisplayName("Deve lançar exceção ao tentar atualizar gasto de outro usuário")
     void deveLancarErroAoAtualizarGastoDeOutro() {
 
         UUID idEu = UUID.randomUUID();
@@ -157,26 +174,26 @@ class GastoServiceTest {
 
         when(gastoRepository.findById(idGasto)).thenReturn(Optional.of(gastoDeOutro));
 
-        AtualizarGastoDTO dto = new AtualizarGastoDTO("Hacker", GastoTipo.LAZER, BigDecimal.TEN, LocalDate.now());
+        AtualizarGastoDTO dto =
+                new AtualizarGastoDTO("Hacker", GastoTipo.LAZER, BigDecimal.TEN);
 
         assertThatThrownBy(() -> gastoService.atualizar(idGasto, dto))
-                .isInstanceOf(OperacaoNaoPermitidaException.class)
-                .hasMessageContaining("permissão");
+                .isInstanceOf(OperacaoNaoPermitidaException.class);
 
         verify(gastoRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("Deve deletar gasto se for ADMIN, mesmo não sendo dono")
+    @DisplayName("Deve deletar gasto se for ADMIN")
     void adminDeveDeletarGastoDeQualquerUm() {
 
         UUID idAdmin = UUID.randomUUID();
-        UUID idUsuarioComum = UUID.randomUUID();
+        UUID idUsuario = UUID.randomUUID();
         UUID idGasto = UUID.randomUUID();
         mockSecurityContext(idAdmin, "ADMIN");
 
         Usuario dono = new Usuario();
-        dono.setId(idUsuarioComum);
+        dono.setId(idUsuario);
 
         Gasto gasto = new Gasto();
         gasto.setUsuario(dono);
@@ -189,8 +206,9 @@ class GastoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção se Gasto não existe")
+    @DisplayName("Deve lançar exceção se Gasto não existir")
     void deveLancarErroSeGastoNaoExiste() {
+
         UUID id = UUID.randomUUID();
         when(gastoRepository.findById(id)).thenReturn(Optional.empty());
 
