@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,10 +84,6 @@ public class GastoService {
         Gasto gastoExistente = buscarGastoEValidarPermissao(id);
 
         gastoMapper.updateEntityFromDTO(gastoDTO, gastoExistente);
-
-        if (gastoExistente.getDataGasto() == null) {
-            gastoExistente.setDataGasto(LocalDate.now());
-        }
 
         gastoValidator.validar(gastoExistente);
         gastoRepository.save(gastoExistente);
