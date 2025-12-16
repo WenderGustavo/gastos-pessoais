@@ -132,7 +132,7 @@ public class UsuarioService {
             log.error("Email informado é nulo ou vazio");
             throw new IllegalArgumentException("Email must not be null or empty");
         }
-        return gastoRepository.findByUsuarioEmailOrderByDataGastoDesc(email)
+        return gastoRepository.findByUsuarioEmailOrderByCreatedAtDesc(email)
                 .stream()
                 .map(gastoMapper::toDTO)
                 .toList();
