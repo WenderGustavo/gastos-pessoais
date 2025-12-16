@@ -5,9 +5,12 @@ import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+
+import static io.github.wendergustavo.gastospessoais.repository.specs.GastoSpecs.*;
 
 @RequiredArgsConstructor
 @Component
@@ -43,21 +46,16 @@ public class GastoValidator {
 
     private boolean validarGastoDuplicado(Gasto gasto) {
 
-        if (gasto.getId() != null) {
-            return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuarioAndIdNot(
-                    gasto.getDescricao(),
-                    gasto.getGastoTipo(),
-                    gasto.getValor(),
-                    gasto.getUsuario(),
-                    gasto.getId()
-            );
-        }
-
-        return !gastoRepository.existsByDescricaoAndGastoTipoAndValorAndUsuario(
-                gasto.getDescricao(),
-                gasto.getGastoTipo(),
-                gasto.getValor(),
-                gasto.getUsuario()
+        Specification<Gasto> spec = Specification.allOf(
+                descricaoIgual(gasto.getDescricao()),
+                tipoIgual(gasto.getGastoTipo()),
+                valorIgual(gasto.getValor()),
+                usuarioIgual(gasto.getUsuario()),
+                gasto.getId() != null ? idDiferenteDe(gasto.getId()) : null
         );
+
+        return !gastoRepository.exists(spec);
     }
+
+
 }
