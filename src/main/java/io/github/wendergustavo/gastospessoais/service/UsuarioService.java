@@ -16,6 +16,8 @@ import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
 import io.github.wendergustavo.gastospessoais.validador.UsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,7 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "usuarios", key = "#id")
     public UsuarioResponseDTO buscarPorId(UUID id){
 
         log.info("Buscando usuário por id={}", id);
@@ -66,6 +69,7 @@ public class UsuarioService {
     }
 
     @Transactional
+    @CacheEvict(value = "usuarios", key = "#id")
     public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO usuarioDTO){
 
         log.info("Atualizando usuário: id={}", id);
@@ -96,6 +100,7 @@ public class UsuarioService {
     }
 
     @Transactional
+    @CacheEvict(value = "usuarios", key = "#id")
     public void deletar(UUID id){
 
         log.info("Deletando usuário: id={}", id);
@@ -124,6 +129,7 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "gastos", key = "#email")
     public List<GastoResponseDTO> listarGastosPorEmail(String email) {
 
         log.info("Listando gastos para email={}", email);
@@ -150,7 +156,9 @@ public class UsuarioService {
         return usuarioMapper.toListResponseDTO(usuarios);
     }
 
+
     @Transactional(readOnly = true)
+    @Cacheable(value = "usuarios", key = "#email")
     public Usuario obterPorEmail(String email){
 
         log.info("Buscando usuário por email={}", email);
