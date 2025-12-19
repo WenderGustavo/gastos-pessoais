@@ -1,64 +1,95 @@
-# Gastos Pessoais
+# 💰 API de Controle de Gastos Pessoais
 
-## Descrição
+<div align="center">
+  <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java" alt="Java"/>
+  <img src="https://img.shields.io/badge/Spring_Boot-3-green?style=for-the-badge&logo=springboot" alt="Spring Boot"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/Redis-Cache-red?style=for-the-badge&logo=redis" alt="Redis"/>
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker" alt="Docker"/>
+</div>
 
-O projeto **Gastos Pessoais** é uma aplicação backend construída em **Java** com **Spring Boot** que permite gerenciar usuários e seus gastos pessoais.  
-Ele fornece operações de **CRUD** para usuários e gastos, validações de dados e segurança básica, além de testes de integração e unitários para garantir qualidade.
+<br>
 
-O objetivo do projeto é treinar boas práticas de desenvolvimento, como **MVC**, **Clean Code**, **Testes Automatizados**, **Spring Data JPA**, e **versionamento com Git**.
+## 📋 Sobre o Projeto
 
----
+O **Gastos Pessoais API** é um serviço backend robusto e escalável desenvolvido para gerenciamento financeiro pessoal. O projeto vai além do CRUD básico, implementando práticas de arquitetura de software modernas, foco em performance e observabilidade.
 
-## Funcionalidades
-
-- CRUD de **Usuários**
-- CRUD de **Gastos** associados a usuários
-- Validações de campos (ex.: valor do gasto positivo, usuário existente, senha válida)
-- Relacionamento **Usuário → Gasto**
-- Testes automatizados:
-    - **Unitários** (Validador, Service)
-    - **Integração** (Repository com H2)
-- Scripts SQL para popular o banco de teste (Pode utilizar caso deseje)
+O objetivo principal foi criar uma API performática utilizando **Cache Distribuído (Redis)** para leituras rápidas, segurança com **JWT**, e monitoramento em tempo real com **Prometheus e Grafana**.
 
 ---
 
-## Tecnologias e Ferramentas
+## 🚀 Tecnologias e Arquitetura
 
-- **Java 21**
-- **Spring Boot**
-- **Spring Data JPA**
-- **Spring Test / JUnit 5**
-- **Mockito** (mock de validações e serviços)
-- **H2 Database** (banco em memória para testes)
-- **Lombok**
-- **Maven**
-- **Git** (controle de versão)
+O projeto foi construído utilizando as seguintes tecnologias:
+
+* **Linguagem:** Java 17+
+* **Framework:** Spring Boot 3
+* **Banco de Dados:** PostgreSQL 15 (com Migrations via Flyway)
+* **Cache:** Redis (Implementação Cache-Aside e Serialização JSON Customizada)
+* **Segurança:** Spring Security + JWT (Stateless Authentication)
+* **Monitoramento:** Spring Actuator, Prometheus e Grafana
+* **Containerização:** Docker e Docker Compose
+* **Outros:** Lombok, MapStruct, Hibernate Validator
 
 ---
 
-## Estrutura do Projeto
-```
-src/
-├─ main/
-│ ├─ java/
-│ │ └─ io.github.wendergustavo.gastospessoais/
-│ │ ├─ configuration/ # Configurações do Spring (Beans, Security, etc.)
-│ │ ├─ controller/ # Endpoints REST e Controllers
-│ │ ├─ dto/ # Data Transfer Objects para requisições/respostas
-│ │ ├─ entity/ # Entidades JPA (Usuario, Gasto, etc.)
-│ │ ├─ exceptions/ # Exceções customizadas do projeto
-│ │ ├─ mapper/ # Conversão entre Entity e DTO
-│ │ ├─ repository/ # Interfaces de acesso a dados (JPA)
-│ │ ├─ service/ # Lógica de negócio e transações
-│ │ └─ validador/ # Regras de validação (UsuarioValidator, GastoValidator)
-│ └─ resources/
-│ └─ application.yml # Configurações do Spring
-└─ test/
-├─ java/
-│ └─ io.github.wendergustavo.gastospessoais/
-│ ├─ entity/ # Testes de getters e setters
-│ ├─ repository/ # Testes de integração dos repositories
-│ └─ service/ # Testes unitários e de integração dos services
-└─ resources/
-└─ sql/ # Scripts SQL para popular o banco de teste
-```
+## ✨ Funcionalidades Principais
+
+* **Autenticação e Segurança:** Login, Cadastro e proteção de rotas via Token JWT.
+* **Gestão de Gastos:** CRUD completo com validações de negócio.
+* **Alta Performance:**
+    * Cache de leitura (`@Cacheable`) para listagens frequentes.
+    * Invalidação inteligente de cache (`@CacheEvict`) em atualizações.
+    * Serialização JSON customizada no Redis para suportar Java Records e Datas (Java 8 Time).
+* **Consultas Otimizadas:**
+    * Uso de **Projections (DTOs)** para leituras rápidas.
+    * **Índices de Banco de Dados** para filtros por data e usuário.
+* **Observabilidade:** Exposição de métricas para monitoramento de CPU, Memória e Connection Pool.
+
+---
+
+## 🐳 Como Rodar (Via Docker)
+
+A maneira mais fácil de rodar a aplicação é utilizando o Docker Compose, que sobe o Banco, o Redis e a Aplicação automaticamente.
+
+### Pré-requisitos
+* Docker e Docker Compose instalados.
+
+### Passo a Passo
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/WenderGustavo/gastospessoais.git](https://github.com/WenderGustavo/gastospessoais.git)
+    cd gastospessoais
+    ```
+
+2.  **Configure as Variáveis de Ambiente:**
+    Crie um arquivo `.env` na raiz (ou altere o `docker-compose.yml` se preferir) com suas credenciais.
+    *(O projeto já possui configurações padrão para ambiente de desenvolvimento)*.
+
+3.  **Suba os containers:**
+    ```bash
+    docker-compose up -d --build
+    ```
+
+4.  **Acesse a Aplicação:**
+    * **API:** `http://localhost:8080`
+    * **Swagger UI (Doc):** `http://localhost:8080/swagger-ui.html` (Se configurado)
+    * **Métricas (Prometheus):** `http://localhost:8080/actuator/prometheus`
+
+---
+
+## 📂 Estrutura do Projeto
+
+O projeto segue uma arquitetura em camadas focada em separação de responsabilidades:
+
+```text
+src/main/java/io/github/wendergustavo/gastospessoais
+├── 📁 configuration  # Configurações (Cache, Security, Swagger, Jackson)
+├── 📁 controller     # Camada REST (Entrada de dados)
+├── 📁 service        # Regras de Negócio e Cache
+├── 📁 repository     # Acesso a Dados (Spring Data JPA)
+├── 📁 Validator      # Validação das regras de negocio
+├── 📁 dto            # Objetos de Transferência (Request/Response/Projections)
+├── 📁 exception      # Tratamento global de erros (ControllerAdvice)
+└── 📁 security       # Filtros e Configuração JWT
