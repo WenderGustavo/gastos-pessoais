@@ -1,5 +1,15 @@
 
 services:
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - gasto-network
+
   postgres:
     image: postgres:15
     container_name: gastodb
@@ -38,11 +48,14 @@ services:
     container_name: gastos-api
     depends_on:
       - postgres
+      - redis
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     ports:
       - "8080:8080"
     networks:
