@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +16,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @ToString(exclude = "gastos")
-public class Usuario {
+public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "id")

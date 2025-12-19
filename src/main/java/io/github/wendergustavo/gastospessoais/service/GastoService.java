@@ -16,6 +16,8 @@ import io.github.wendergustavo.gastospessoais.security.CustomAuthentication;
 import io.github.wendergustavo.gastospessoais.validador.GastoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +63,8 @@ public class GastoService {
         return gastoMapper.toDTO(gasto);
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "gastos", key = "#id")
     public GastoResponseDTO buscarPorId(UUID id) {
         if (id == null) {
             log.error("ID de gasto nulo");
@@ -74,6 +78,7 @@ public class GastoService {
     }
 
     @Transactional
+    @CacheEvict(value = "gastos", key = "#id")
     public GastoResponseDTO atualizar(UUID id, AtualizarGastoDTO gastoDTO) {
         if (id == null) {
             log.error("ID de gasto nulo");
@@ -93,6 +98,7 @@ public class GastoService {
     }
 
     @Transactional
+    @CacheEvict(value = "gastos", key = "#id")
     public void deletar(UUID id) {
         if (id == null) {
             log.error("ID de gasto nulo");
@@ -106,6 +112,7 @@ public class GastoService {
         log.info("Gasto deletado {}", id);
     }
 
+    @Transactional(readOnly = true)
     public ListaGastosResponseDTO buscarTodosGastos() {
         UsuarioDetailsDTO usuarioLogado = getUsuarioLogado();
 
