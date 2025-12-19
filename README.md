@@ -1,7 +1,7 @@
 # 💰 API de Controle de Gastos Pessoais
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java" alt="Java"/>
+  <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" alt="Java"/>
   <img src="https://img.shields.io/badge/Spring_Boot-3-green?style=for-the-badge&logo=springboot" alt="Spring Boot"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/Redis-Cache-red?style=for-the-badge&logo=redis" alt="Redis"/>
@@ -22,7 +22,7 @@ O objetivo principal foi criar uma API performática utilizando **Cache Distribu
 
 O projeto foi construído utilizando as seguintes tecnologias:
 
-* **Linguagem:** Java 17+
+* **Linguagem:** Java 21+
 * **Framework:** Spring Boot 3
 * **Banco de Dados:** PostgreSQL 15 (com Migrations via Flyway)
 * **Cache:** Redis (Implementação Cache-Aside e Serialização JSON Customizada)
