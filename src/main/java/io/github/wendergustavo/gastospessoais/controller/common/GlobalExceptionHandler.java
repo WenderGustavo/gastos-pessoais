@@ -7,6 +7,7 @@ import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaExc
 import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -82,6 +83,21 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResposta handleAuthorizationDenied(AuthorizationDeniedException e) {
+
+        log.warn("Acesso negado por regra de autorização: {}", e.getMessage());
+
+        return new ErroResposta(
+                HttpStatus.FORBIDDEN.value(),
+                "Access Denied.",
+                List.of(new ErroCampo(
+                        "autorizacao",
+                        "Você não tem permissão para executar esta operação."
+                ))
+        );
+    }
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErroResposta handleErroInesperado(Exception e){

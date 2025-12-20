@@ -1,6 +1,7 @@
 package io.github.wendergustavo.gastospessoais.configuration;
 
 import io.github.wendergustavo.gastospessoais.security.CustomAuthenticationProvider;
+import io.github.wendergustavo.gastospessoais.security.JwtAccessDeniedHandler;
 import io.github.wendergustavo.gastospessoais.security.JwtAuthenticationEntryPoint;
 import io.github.wendergustavo.gastospessoais.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler accessDeniedHandler;
 
 
     private static final String[] PUBLIC_ENDPOINTS = {
@@ -69,6 +71,7 @@ public class SecurityConfiguration {
                 )
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -76,7 +79,7 @@ public class SecurityConfiguration {
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        return new GrantedAuthorityDefaults(""); // Remove o prefixo ROLE_
+        return new GrantedAuthorityDefaults("");
     }
 
     @Bean
