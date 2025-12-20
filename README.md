@@ -42,7 +42,6 @@ O projeto foi construído utilizando as seguintes tecnologias:
     * Invalidação inteligente de cache (`@CacheEvict`) em atualizações.
     * Serialização JSON customizada no Redis para suportar Java Records e Datas (Java 8 Time).
 * **Consultas Otimizadas:**
-    * Uso de **Projections (DTOs)** para leituras rápidas.
     * **Índices de Banco de Dados** para filtros por data e usuário.
 * **Observabilidade:** Exposição de métricas para monitoramento de CPU, Memória e Connection Pool.
 
