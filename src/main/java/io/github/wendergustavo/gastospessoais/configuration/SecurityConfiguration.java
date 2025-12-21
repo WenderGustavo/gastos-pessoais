@@ -51,9 +51,6 @@ public class SecurityConfiguration {
             "/health",
             "/actuator/health",
             "/actuator/prometheus",
-
-            "/auth/login",
-            "/auth/**"
     };
 
     @Bean
@@ -66,6 +63,8 @@ public class SecurityConfiguration {
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+
 
                         .anyRequest().authenticated()
                 )

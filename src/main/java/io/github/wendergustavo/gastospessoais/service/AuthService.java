@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,20 +21,28 @@ public class AuthService {
     private final JwtService jwtService;
 
     public TokenDTO login(LoginDTO dto) {
+
         log.info("Tentando autenticar usuário: {}", dto.email());
 
-        var dadosLogin = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
+        try {
+            var dadosLogin = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
 
-        Authentication auth = authenticationManager.authenticate(dadosLogin);
+            Authentication auth = authenticationManager.authenticate(dadosLogin);
 
-        UsuarioDetailsDTO usuarioDTO = (UsuarioDetailsDTO) auth.getPrincipal();
+            UsuarioDetailsDTO usuarioDTO = (UsuarioDetailsDTO) auth.getPrincipal();
 
-        log.info("Usuário autenticado com sucesso: {} (role: {})", usuarioDTO.email(), usuarioDTO.role());
+            log.info("Usuário autenticado com sucesso: {} (role: {})", usuarioDTO.email(), usuarioDTO.role());
 
-        String token = jwtService.gerarToken(usuarioDTO);
+            String token = jwtService.gerarToken(usuarioDTO);
 
-        log.debug("Token JWT gerado para usuário {}", usuarioDTO.id());
+            log.debug("Token JWT gerado para usuário {}", usuarioDTO.id());
 
-        return new TokenDTO(token);
+            return new TokenDTO(token);
+
+        } catch (AuthenticationException e) {
+            log.error("DEBUG - Exceção capturada no AuthService: {}", e.getClass().getSimpleName());
+            log.error("DEBUG - Mensagem: {}", e.getMessage());
+            throw e;
+        }
     }
 }
