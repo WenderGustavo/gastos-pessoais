@@ -6,11 +6,11 @@ import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -35,14 +35,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if (usuarioEncontrado == null) {
             log.warn("Tentativa de login com email inexistente: {}", login);
-            throw new UsernameNotFoundException("Usuário e/ou senha incorretos!");
+            throw new BadCredentialsException("Usuário e/ou senha incorretos!");
         }
 
         boolean senhaBate = encoder.matches(senhaDigitada, usuarioEncontrado.getSenha());
 
         if (!senhaBate) {
             log.warn("Senha incorreta para o usuário {}", login);
-            throw new UsernameNotFoundException("Usuário e/ou senha incorretos!");
+            throw new BadCredentialsException("Usuário e/ou senha incorretos!");
         }
 
         log.info("Login bem-sucedido para o usuário {}", login);
