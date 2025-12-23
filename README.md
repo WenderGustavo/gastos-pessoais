@@ -116,20 +116,20 @@ A documentação interativa da API está disponível em: 👉 http://localhost:8
 
 Fluxo de Autenticação
 1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
-
+ 
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
 
-
-3. Pegar o Token: A API retornará um JSON com o token:
+2. Pegar o Token: A API retornará um JSON com o token:
 
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
 
-5. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
+
+3. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
