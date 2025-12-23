@@ -138,9 +138,6 @@ src/main/java/io/github/wendergustavo/gastospessoais
 ├── 📁 security       # Filtros JWT e Configuração de Acesso
 └── 📁 exception      # Tratamento global de erros (ControllerAdvice)
 
-📊 Monitoramento (Observabilidade)
-Se você subiu o projeto via Docker Compose, o monitoramento já está ativo.
-
 Prometheus: http://localhost:9090
 
 Grafana: http://localhost:3000 (Login: admin / admin)
