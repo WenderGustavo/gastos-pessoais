@@ -133,7 +133,7 @@ Fluxo de Autenticação
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
-
+```
 src/main/java/io/github/wendergustavo/gastospessoais
 ├── configuration   # Configs de Beans
 ├── controller      # Camada REST
@@ -145,7 +145,7 @@ src/main/java/io/github/wendergustavo/gastospessoais
 ├── validator       # Validações
 ├── security        # JWT e Acesso
 └── exception       # Handler global
-
+```
 
 Prometheus: http://localhost:9090
 
