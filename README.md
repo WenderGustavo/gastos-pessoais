@@ -79,7 +79,6 @@ JWT_EXPIRATION=86400000
 
 🔐 Como gerar uma JWT_SECRET segura?
 Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash):
-
 openssl rand -base64 32
 
 Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
@@ -93,7 +92,6 @@ cd gastospessoais
 
 2. Suba o ambiente com Docker Compose
 Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
-
 docker-compose up -d --build
 
 3. População Inicial (Seed) 🌱
@@ -109,14 +107,12 @@ A documentação interativa da API está disponível em: 👉 http://localhost:8
 
 Fluxo de Autenticação
 1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
-
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
 
 2. Pegar o Token: A API retornará um JSON com o token:
-
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
@@ -125,7 +121,6 @@ Fluxo de Autenticação
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
-
 src/main/java/io/github/wendergustavo/gastospessoais
 ├── 📁 configuration  # Configs de Beans (Redis, Swagger, Security, Seeder)
 ├── 📁 controller     # Camada REST (Entrada de dados e documentação)
