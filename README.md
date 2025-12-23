@@ -136,7 +136,7 @@ Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou Us
 }
 
 ```
-3. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
+3. Autorizar: No Swagger, clique no botão Authorize (cadeado) no  lado superior direito e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
