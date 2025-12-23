@@ -104,9 +104,10 @@ docker-compose up -d --build
 Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
 
 Use estas credenciais para testar no Swagger/Postman:
-Perfil,  Email,      Senha
-Admin,  admin@.com,  12345678
-User,  user@.com,  12345678
+
+Perfil | Email        | Senha
+Admin  | admin@.com   | 12345678
+User   | user@.com    | 12345678
 
 
 📖 Guia de Requisições (Swagger & Testes)
