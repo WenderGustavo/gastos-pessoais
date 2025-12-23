@@ -111,26 +111,31 @@ Use estas credenciais para testar no Swagger/Postman:
 | User   | user@.com   | 12345678 |
 
 
-##📖 Guia de Requisições (Swagger & Testes)
-A documentação interativa da API está disponível em: 👉 http://localhost:8080/swagger-ui.html
+## 📖 Guia de Requisições (Swagger & Testes)
 
-Fluxo de Autenticação
-1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
- 
+A documentação interativa da API está disponível em:  
+👉 http://localhost:8080/swagger-ui.html
+
+### 🔐 Fluxo de Autenticação
+
+1. **Login**  
+Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou User (tabela acima):
+
+```json
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
-
+```
 
 2. Pegar o Token: A API retornará um JSON com o token:
-
+ 
+```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
 
-
-
+```
 3. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
 📂 Estrutura do Projeto
