@@ -2,10 +2,7 @@ package io.github.wendergustavo.gastospessoais.controller;
 
 
 import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.*;
 import io.github.wendergustavo.gastospessoais.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,18 +27,22 @@ public class UsuarioController implements GenericController {
     private final UsuarioService usuarioService;
 
 
-    @PostMapping
-    @Operation(summary = "Salva um novo usuario", description = "Cadastra um novo usuário. Apenas ADMINs podem executar esta operação.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-            @ApiResponse(responseCode = "422", description = "Erro de validação nos dados enviados"),
-            @ApiResponse(responseCode = "409", description = "Usuário já cadastrado"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado")
-    })
-    public ResponseEntity<Void> salvarUsuario(@RequestBody @Valid UsuarioDTO dto){
+    @PostMapping("/cadastro")
+    @Operation(summary = "Auto-cadastro", description = "Cria um usuário comum (USER). Não requer autenticação.")
+    public ResponseEntity<Void> cadastrarSe(@RequestBody @Valid CadastroUsuarioDTO dto) {
 
-        UsuarioResponseDTO usuarioResponseDTO = usuarioService.salvar(dto);
-        URI location = gerarHeaderLocation(usuarioResponseDTO.id());
+        UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarProprioUsuario(dto);
+        URI location = gerarHeaderLocation(usuarioSalvo.id());
+        return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/gestao")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Criar Usuário (Admin)", description = "Permite que um Admin crie outros usuários (inclusive Admins).")
+    public ResponseEntity<Void> criarUsuarioPeloAdmin(@RequestBody @Valid UsuarioDTO dto) {
+
+        UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarPeloAdmin(dto);
+        URI location = gerarHeaderLocation(usuarioSalvo.id());
         return ResponseEntity.created(location).build();
     }
 
