@@ -90,61 +90,60 @@ A aplicação é totalmente containerizada. Você não precisa ter Java ou Postg
 
 1. Clone o repositório
 ```bash
-git clone [https://github.com/WenderGustavo/gastospessoais.git](https://github.com/WenderGustavo/gastospessoais.git)
+git clone https://github.com/WenderGustavo/gastospessoais.git
 cd gastospessoais
 ```
 
-3. Suba o ambiente com Docker Compose
+2. Suba o ambiente com Docker Compose
 Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
 ```bash
 docker-compose up -d --build
 ```
 
-5. População Inicial (Seed) 🌱
+3. População Inicial (Seed) 🌱
 Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
 
 Use estas credenciais para testar no Swagger/Postman:
 
-Admin--  email:  admin@.com  senha:  12345678
-
-User--  email:  user@.com  senha:  12345678
-
+Perfil | Email        | Senha
+Admin  | admin@.com   | 12345678
+User   | user@.com    | 12345678
 
 📖 Guia de Requisições (Swagger & Testes)
 A documentação interativa da API está disponível em: 👉 http://localhost:8080/swagger-ui.html
 
 Fluxo de Autenticação
 1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
-```bash
+
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
-```
+
 
 3. Pegar o Token: A API retornará um JSON com o token:
-```bash
+
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
-```
+
 5. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn... (Não esqueça da palavra Bearer e o espaço).
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
-```bash
+
 src/main/java/io/github/wendergustavo/gastospessoais
-├── 📁 configuration  # Configs de Beans (Redis, Swagger, Security, Seeder)
-├── 📁 controller     # Camada REST (Entrada de dados e documentação)
-├── 📁 service        # Regras de Negócio, Caching e Validações lógicas
-├── 📁 repository     # Persistência de dados (Spring Data JPA)
-├── 📁 model          # Entidades JPA (Mapeamento ORM)
-├── 📁 dto            # Objetos de Transferência (Records - Imutáveis)
-├── 📁 mapper         # Conversão Entidade <-> DTO (MapStruct)
-├── 📁 validator      # Regras de validação de negócio customizadas
-├── 📁 security       # Filtros JWT e Configuração de Acesso
-└── 📁 exception      # Tratamento global de erros (ControllerAdvice)
-```
+├── configuration   # Configs de Beans
+├── controller      # Camada REST
+├── service         # Regras de Negócio
+├── repository      # Persistência
+├── model           # Entidades JPA
+├── dto             # DTOs
+├── mapper          # MapStruct
+├── validator       # Validações
+├── security        # JWT e Acesso
+└── exception       # Handler global
+
 Prometheus: http://localhost:9090
 
 Grafana: http://localhost:3000 (Login: admin / admin)
