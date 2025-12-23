@@ -1,13 +1,10 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.*;
+import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
-import io.github.wendergustavo.gastospessoais.exceptions.UsuarioEmailNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.exceptions.UsuarioIdNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
@@ -23,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -38,15 +36,39 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UsuarioResponseDTO salvar(UsuarioDTO usuarioDTO){
+    public UsuarioResponseDTO cadastrarProprioUsuario(CadastroUsuarioDTO dto) {
+        log.info("Novo auto-cadastro solicitado: email={}", dto.email());
 
-        log.info("Criando novo usuário: email={}", usuarioDTO.email());
-        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
+        Usuario usuario = usuarioMapper.toEntitySimple(dto);
+
+        usuario.setRole(Roles.USER);
+
+        return salvarInterno(usuario);
+    }
+
+
+    @Transactional
+    public UsuarioResponseDTO cadastrarPeloAdmin(UsuarioDTO dto) {
+        log.info("Admin criando usuário: email={}", dto.email());
+
+        Usuario usuario = usuarioMapper.toEntity(dto);
+
+        if (usuario.getRole() == null) {
+            usuario.setRole(Roles.USER);
+        }
+
+        return salvarInterno(usuario);
+    }
+
+    private UsuarioResponseDTO salvarInterno(Usuario usuario) {
         usuarioValidator.validar(usuario);
+
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);
+
         Usuario salvo = usuarioRepository.save(usuario);
-        log.info("Usuário criado com sucesso: id={}", salvo.getId());
+        log.info("Usuário persistido com sucesso: id={}", salvo.getId());
+
         return usuarioMapper.toResponseDTO(salvo);
     }
 
@@ -158,21 +180,21 @@ public class UsuarioService {
 
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "usuarios", key = "#email")
-    public Usuario obterPorEmail(String email){
+    @Cacheable(
+            value = "usuarios",
+            key = "#email",
+            unless = "#result == null"
+    )
+    public Optional<Usuario> obterPorEmail(String email) {
 
         log.info("Buscando usuário por email={}", email);
 
-        if (email == null || email.isBlank()){
-
+        if (email == null || email.isBlank()) {
             log.error("Email informado é nulo ou vazio");
-            throw new IllegalArgumentException("Email must not be null or empty");
+            return Optional.empty();
         }
-        return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Usuário não encontrado: email={}", email);
-                    return new UsuarioEmailNaoEncontradoException("User not found with this email");
-                });
+
+        return usuarioRepository.findByEmail(email);
     }
 
     public boolean possuiGasto(Usuario usuario){

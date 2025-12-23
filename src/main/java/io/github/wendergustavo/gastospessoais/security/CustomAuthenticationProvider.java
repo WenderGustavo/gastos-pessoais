@@ -31,7 +31,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         log.info("Tentando autenticar usuário {}", login);
 
-        Usuario usuarioEncontrado = usuarioService.obterPorEmail(login);
+        Usuario usuarioEncontrado = usuarioService
+                .obterPorEmail(login)
+                .orElseThrow(() -> {
+                    log.warn("Tentativa de login com email inexistente: {}", login);
+                    return new BadCredentialsException("Usuário e/ou senha incorretos!");
+                });
 
         if (usuarioEncontrado == null) {
             log.warn("Tentativa de login com email inexistente: {}", login);

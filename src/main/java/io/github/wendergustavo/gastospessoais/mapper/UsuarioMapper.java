@@ -1,10 +1,7 @@
 package io.github.wendergustavo.gastospessoais.mapper;
 
 
-import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.*;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -16,6 +13,8 @@ import java.util.stream.Collectors;
 public interface UsuarioMapper {
 
     Usuario toEntity(UsuarioDTO usuarioDTO);
+
+    Usuario toEntitySimple(CadastroUsuarioDTO usuarioDTO);
 
     UsuarioResponseDTO toResponseDTO(Usuario usuario);
 

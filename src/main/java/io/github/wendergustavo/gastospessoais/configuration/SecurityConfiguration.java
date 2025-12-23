@@ -62,7 +62,8 @@ public class SecurityConfiguration {
 
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/gestao").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
 

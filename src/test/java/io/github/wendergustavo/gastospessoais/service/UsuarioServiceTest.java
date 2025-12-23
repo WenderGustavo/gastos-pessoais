@@ -1,10 +1,7 @@
 package io.github.wendergustavo.gastospessoais.service;
 
 import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.AtualizarUsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.ListaUsuarioResponseDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDTO;
-import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioResponseDTO;
+import io.github.wendergustavo.gastospessoais.dto.usuario.*;
 import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.GastoTipo;
 import io.github.wendergustavo.gastospessoais.entity.Roles;
@@ -22,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,7 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,27 +59,31 @@ class UsuarioServiceTest {
     private UsuarioService usuarioService;
 
     @Test
-    @DisplayName("Deve salvar um usuário com sucesso")
-    void deveSalvarUmUsuarioComSucesso() {
+    @DisplayName("Deve salvar um usuário criado pelo admin com sucesso")
+    void deveSalvarUsuarioCriadoPeloAdminComSucesso() {
+
         var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789", Roles.USER);
 
         var usuario = new Usuario();
         usuario.setSenha("123456789");
+        usuario.setRole(Roles.USER);
 
         var usuarioSalvo = new Usuario();
         usuarioSalvo.setSenha("senhaEncriptada");
 
-        var response = new UsuarioResponseDTO(UUID.randomUUID(), "Wender", "teste@gmail.com", Roles.USER);
+        var response = new UsuarioResponseDTO(
+                UUID.randomUUID(),
+                "Wender",
+                "teste@gmail.com",
+                Roles.USER
+        );
 
         when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
-
         when(encoder.encode("123456789")).thenReturn("senhaEncriptada");
-
         when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
-
         when(usuarioMapper.toResponseDTO(usuarioSalvo)).thenReturn(response);
 
-        var result = usuarioService.salvar(dto);
+        var result = usuarioService.cadastrarPeloAdmin(dto);
 
         assertThat(result)
                 .isNotNull()
@@ -90,28 +91,63 @@ class UsuarioServiceTest {
                 .isEqualTo("teste@gmail.com");
 
         verify(usuarioValidator).validar(usuario);
-
-        assertThat(usuario.getSenha()).isEqualTo("senhaEncriptada");
-
-        verify(usuarioRepository).save(usuario);
-
         verify(encoder).encode("123456789");
+        verify(usuarioRepository).save(usuario);
     }
+
 
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar salvar usuário inválido")
+    @DisplayName("Deve lançar exceção ao tentar salvar usuário inválido pelo admin")
     void deveLancarExcecaoAoSalvarUsuarioInvalido() {
-        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789",Roles.USER);
+
+        var dto = new UsuarioDTO("Wender", "teste@gmail.com", "123456789", Roles.USER);
         var usuario = new Usuario();
 
         when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
-        Mockito.doThrow(new RegistroDuplicadoException("Email already in use."))
+
+        doThrow(new RegistroDuplicadoException("Email already in use."))
                 .when(usuarioValidator).validar(usuario);
 
-        assertThatThrownBy(() -> usuarioService.salvar(dto))
+        assertThatThrownBy(() -> usuarioService.cadastrarPeloAdmin(dto))
                 .isInstanceOf(RegistroDuplicadoException.class);
+
+        verify(usuarioValidator).validar(usuario);
+        verify(usuarioRepository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Deve cadastrar usuário via auto-cadastro com role USER")
+    void deveCadastrarProprioUsuarioComSucesso() {
+
+        var dto = new CadastroUsuarioDTO("Wender", "teste@gmail.com", "123456789");
+
+        var usuario = new Usuario();
+        usuario.setSenha("123456789");
+
+        var usuarioSalvo = new Usuario();
+        usuarioSalvo.setRole(Roles.USER);
+
+        var response = new UsuarioResponseDTO(
+                UUID.randomUUID(),
+                "Wender",
+                "teste@gmail.com",
+                Roles.USER
+        );
+
+        when(usuarioMapper.toEntitySimple(dto)).thenReturn(usuario);
+        when(encoder.encode("123456789")).thenReturn("senhaEncriptada");
+        when(usuarioRepository.save(usuario)).thenReturn(usuarioSalvo);
+        when(usuarioMapper.toResponseDTO(usuarioSalvo)).thenReturn(response);
+
+        var result = usuarioService.cadastrarProprioUsuario(dto);
+
+        assertThat(result.role()).isEqualTo(Roles.USER);
+
+        verify(usuarioValidator).validar(usuario);
+    }
+
+
 
     @Test
     @DisplayName("Deve retornar usuário quando encontrado")
