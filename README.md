@@ -129,7 +129,7 @@ Fluxo de Autenticação
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
 
-5. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn... (Não esqueça da palavra Bearer e o espaço).
+5. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
@@ -145,6 +145,7 @@ src/main/java/io/github/wendergustavo/gastospessoais
 ├── validator       # Validações
 ├── security        # JWT e Acesso
 └── exception       # Handler global
+
 
 Prometheus: http://localhost:9090
 
