@@ -105,9 +105,9 @@ Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automat
 
 Use estas credenciais para testar no Swagger/Postman:
 
-Admin:  email:  admin@.com  senha:  12345678
+Admin--  email:  admin@.com  senha:  12345678
 
-User:  email:  user@.com  senha:  12345678
+User--  email:  user@.com  senha:  12345678
 
 
 📖 Guia de Requisições (Swagger & Testes)
