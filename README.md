@@ -6,89 +6,146 @@
   <img src="https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/Redis-Cache-red?style=for-the-badge&logo=redis" alt="Redis"/>
   <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker" alt="Docker"/>
+  <img src="https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway" alt="Flyway"/>
 </div>
 
 <br>
 
 ## 📋 Sobre o Projeto
 
-O **Gastos Pessoais API** é um serviço backend robusto e escalável desenvolvido para gerenciamento financeiro pessoal. O projeto vai além do CRUD básico, implementando práticas de arquitetura de software modernas, foco em performance e observabilidade.
+O **Gastos Pessoais API** é um sistema backend de alta performance desenvolvido para gestão financeira. O projeto foi arquitetado para resolver problemas reais de escalabilidade, utilizando **Cache Distribuído (Redis)** para reduzir a latência de leitura e **PostgreSQL** para persistência segura.
 
-O objetivo principal foi criar uma API performática utilizando **Cache Distribuído (Redis)** para leituras rápidas, segurança com **JWT**, e monitoramento em tempo real com **Prometheus e Grafana**.
+O sistema implementa autenticação robusta via **JWT (JSON Web Token)** e diferenciação de níveis de acesso (RBAC - Role Based Access Control) entre Administradores e Usuários comuns. Além disso, conta com um setup completo de observabilidade com **Prometheus e Grafana**.
 
 ---
 
-## 🚀 Tecnologias e Arquitetura
+## 🚀 Tecnologias Utilizadas
 
-O projeto foi construído utilizando as seguintes tecnologias:
-
-* **Linguagem:** Java 21+
+* **Linguagem:** Java 21
 * **Framework:** Spring Boot 3
-* **Banco de Dados:** PostgreSQL 15 (com Migrations via Flyway)
-* **Cache:** Redis (Implementação Cache-Aside e Serialização JSON Customizada)
-* **Segurança:** Spring Security + JWT (Stateless Authentication)
-* **Monitoramento:** Spring Actuator, Prometheus e Grafana
-* **Containerização:** Docker e Docker Compose
-* **Outros:** Lombok, MapStruct, Hibernate Validator
+* **Banco de Dados:** PostgreSQL 15
+* **Cache:** Redis (Estratégia Cache-Aside com Serialização Jackson Customizada)
+* **Gerenciamento de Dados:** Flyway (Migrations)
+* **Segurança:** Spring Security + JWT Stateless
+* **Containerização:** Docker & Docker Compose
+* **Observabilidade:** Spring Actuator, Prometheus e Grafana
+* **Documentação:** Swagger (OpenAPI)
 
 ---
 
-## ✨ Funcionalidades Principais
+## ✨ Funcionalidades e Perfis
 
-* **Autenticação e Segurança:** Login, Cadastro e proteção de rotas via Token JWT.
-* **Gestão de Gastos:** CRUD completo com validações de negócio.
-* **Alta Performance:**
-    * Cache de leitura (`@Cacheable`) para listagens frequentes.
-    * Invalidação inteligente de cache (`@CacheEvict`) em atualizações.
-    * Serialização JSON customizada no Redis para suportar Java Records e Datas (Java 8 Time).
-* **Consultas Otimizadas:**
-    * **Índices de Banco de Dados** para filtros por data e usuário.
-* **Observabilidade:** Exposição de métricas para monitoramento de CPU, Memória e Connection Pool.
+O sistema possui controle de acesso rigoroso dividido em dois perfis:
 
----
+### 👑 ADMIN (Administrador)
+* **Gestão de Usuários:** Pode criar novos Administradores e gerenciar qualquer usuário.
+* **Visão Global:** Pode listar gastos de qualquer usuário para fins de auditoria.
+* **Gestão de Gastos:** Pode criar, editar ou remover gastos em nome de outros usuários.
 
-## 🐳 Como Rodar (Via Docker)
-
-A maneira mais fácil de rodar a aplicação é utilizando o Docker Compose, que sobe o Banco, o Redis e a Aplicação automaticamente.
-
-### Pré-requisitos
-* Docker e Docker Compose instalados.
-
-### Passo a Passo
-
-1.  **Clone o repositório:**
-    ```bash
-    git clone [https://github.com/WenderGustavo/gastospessoais.git](https://github.com/WenderGustavo/gastospessoais.git)
-    cd gastospessoais
-    ```
-
-2.  **Configure as Variáveis de Ambiente:**
-    Crie um arquivo `.env` na raiz (ou altere o `docker-compose.yml` se preferir) com suas credenciais.
-    *(O projeto já possui configurações padrão para ambiente de desenvolvimento)*.
-
-3.  **Suba os containers:**
-    ```bash
-    docker-compose up -d --build
-    ```
-
-4.  **Acesse a Aplicação:**
-    * **API:** `http://localhost:8080`
-    * **Swagger UI (Doc):** `http://localhost:8080/swagger-ui.html` (Se configurado)
-    * **Métricas (Prometheus):** `http://localhost:8080/actuator/prometheus`
+### 👤 USER (Usuário Comum)
+* **Auto-cadastro:** Pode criar sua própria conta via rota pública.
+* **Privacidade:** Acessa e gerencia **apenas** os seus próprios gastos.
+* **Segurança:** Não tem permissão para visualizar dados de outros usuários.
 
 ---
 
-## 📂 Estrutura do Projeto
+## ⚙️ Configuração e Variáveis de Ambiente
 
-O projeto segue uma arquitetura em camadas focada em separação de responsabilidades:
+Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
 
-```text
+### 1. Crie o arquivo `.env`
+Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
+
+```ini
+# Configurações do Banco de Dados (Docker)
+POSTGRES_DB=gasto
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+
+# Conexão da Aplicação (Dentro do Container)
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/gasto
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+
+# Configuração do Redis
+SPRING_DATA_REDIS_HOST=redis
+SPRING_DATA_REDIS_PORT=6379
+
+# Segurança JWT (JSON Web Token)
+# IMPORTANTE: Gere uma chave segura (veja instrução abaixo)
+JWT_SECRET=sua_chave_secreta_super_segura_base64_aqui
+JWT_EXPIRATION=86400000
+```
+
+🔐 Como gerar uma JWT_SECRET segura?
+Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash):
+
+openssl rand -base64 32
+
+Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
+
+🐳 Como Rodar (Passo a Passo)
+A aplicação é totalmente containerizada. Você não precisa ter Java ou Postgres instalados na sua máquina, apenas o Docker.
+
+1. Clone o repositório
+git clone [https://github.com/WenderGustavo/gastospessoais.git](https://github.com/WenderGustavo/gastospessoais.git)
+cd gastospessoais
+
+2. Suba o ambiente com Docker Compose
+Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
+
+docker-compose up -d --build
+
+3. População Inicial (Seed) 🌱
+Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
+
+Use estas credenciais para testar no Swagger/Postman:
+Perfil,Email,Senha
+Admin,admin@.com,12345678
+User,user@.com,12345678
+
+📖 Guia de Requisições (Swagger & Testes)
+A documentação interativa da API está disponível em: 👉 http://localhost:8080/swagger-ui.html
+
+Fluxo de Autenticação
+1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
+
+{
+  "email": "admin@.com",
+  "senha": "12345678"
+}
+
+2. Pegar o Token: A API retornará um JSON com o token:
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsIn..."
+}
+
+3. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn... (Não esqueça da palavra Bearer e o espaço).
+
+📂 Estrutura do Projeto
+O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
+
 src/main/java/io/github/wendergustavo/gastospessoais
-├── 📁 configuration  # Configurações (Cache, Security, Swagger, Jackson)
-├── 📁 controller     # Camada REST (Entrada de dados)
-├── 📁 service        # Regras de Negócio e Cache
-├── 📁 repository     # Acesso a Dados (Spring Data JPA)
-├── 📁 Validator      # Validação das regras de negocio
-├── 📁 dto            # Objetos de Transferência (Request/Response/Projections)
-├── 📁 exception      # Tratamento global de erros (ControllerAdvice)
-└── 📁 security       # Filtros e Configuração JWT
+├── 📁 configuration  # Configs de Beans (Redis, Swagger, Security, Seeder)
+├── 📁 controller     # Camada REST (Entrada de dados e documentação)
+├── 📁 service        # Regras de Negócio, Caching e Validações lógicas
+├── 📁 repository     # Persistência de dados (Spring Data JPA)
+├── 📁 model          # Entidades JPA (Mapeamento ORM)
+├── 📁 dto            # Objetos de Transferência (Records - Imutáveis)
+├── 📁 mapper         # Conversão Entidade <-> DTO (MapStruct)
+├── 📁 validator      # Regras de validação de negócio customizadas
+├── 📁 security       # Filtros JWT e Configuração de Acesso
+└── 📁 exception      # Tratamento global de erros (ControllerAdvice)
+
+📊 Monitoramento (Observabilidade)
+Se você subiu o projeto via Docker Compose, o monitoramento já está ativo.
+
+Prometheus: http://localhost:9090
+
+Grafana: http://localhost:3000 (Login: admin / admin)
+
+Health Check: http://localhost:8080/actuator/health
+
+👨‍💻 Autor
+Desenvolvido por Wender Gustavo.
