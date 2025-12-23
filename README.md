@@ -81,6 +81,7 @@ JWT_EXPIRATION=86400000
 Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash):
 ```bash
 openssl rand -base64 32
+```
 
 Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
 
@@ -88,40 +89,50 @@ Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
 A aplicação é totalmente containerizada. Você não precisa ter Java ou Postgres instalados na sua máquina, apenas o Docker.
 
 1. Clone o repositório
+```bash
 git clone [https://github.com/WenderGustavo/gastospessoais.git](https://github.com/WenderGustavo/gastospessoais.git)
 cd gastospessoais
+```
 
-2. Suba o ambiente com Docker Compose
+3. Suba o ambiente com Docker Compose
 Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
+```bash
 docker-compose up -d --build
+```
 
-3. População Inicial (Seed) 🌱
+5. População Inicial (Seed) 🌱
 Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
 
 Use estas credenciais para testar no Swagger/Postman:
+```bash
 Perfil,Email,Senha
 Admin,admin@.com,12345678
 User,user@.com,12345678
+```
 
 📖 Guia de Requisições (Swagger & Testes)
 A documentação interativa da API está disponível em: 👉 http://localhost:8080/swagger-ui.html
 
 Fluxo de Autenticação
 1. Login: Faça uma requisição POST em /auth/login com as credenciais do Admin ou User (tabela acima).
+```bash
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
+```
 
-2. Pegar o Token: A API retornará um JSON com o token:
+3. Pegar o Token: A API retornará um JSON com o token:
+```bash
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
-
-3. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn... (Não esqueça da palavra Bearer e o espaço).
+```
+5. Autorizar: No Swagger, clique no botão Authorize (cadeado) e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn... (Não esqueça da palavra Bearer e o espaço).
 
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
+```bash
 src/main/java/io/github/wendergustavo/gastospessoais
 ├── 📁 configuration  # Configs de Beans (Redis, Swagger, Security, Seeder)
 ├── 📁 controller     # Camada REST (Entrada de dados e documentação)
@@ -133,7 +144,7 @@ src/main/java/io/github/wendergustavo/gastospessoais
 ├── 📁 validator      # Regras de validação de negócio customizadas
 ├── 📁 security       # Filtros JWT e Configuração de Acesso
 └── 📁 exception      # Tratamento global de erros (ControllerAdvice)
-
+```
 Prometheus: http://localhost:9090
 
 Grafana: http://localhost:3000 (Login: admin / admin)
