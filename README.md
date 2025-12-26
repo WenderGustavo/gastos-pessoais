@@ -78,7 +78,7 @@ JWT_EXPIRATION=86400000
 ```
 
 🔐 Como gerar uma JWT_SECRET segura?
-Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash):
+Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash) (Opcional):
 ```bash
 openssl rand -base64 32
 ```
