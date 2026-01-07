@@ -52,7 +52,7 @@ O sistema possui controle de acesso rigoroso dividido em dois perfis:
 🐳 Como Rodar (Passo a Passo)
 A aplicação é totalmente containerizada. Você não precisa ter Java ou Postgres instalados na sua máquina, apenas o Docker.
 
-1. Clone o repositório
+1. Clone o repositório(Você precisa ter o git instalado)
 ```bash
 git clone https://github.com/WenderGustavo/gastospessoais.git
 cd gastospessoais
