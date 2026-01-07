@@ -58,23 +58,10 @@ Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
 
 ```ini
 # Configurações do Banco de Dados (Docker)
-POSTGRES_DB=gasto
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-
-# Conexão da Aplicação (Dentro do Container)
 SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/gasto
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
-
-# Configuração do Redis
-SPRING_DATA_REDIS_HOST=redis
-SPRING_DATA_REDIS_PORT=6379
-
-# Segurança JWT (JSON Web Token)
-# IMPORTANTE: Gere uma chave segura (veja instrução abaixo)
-JWT_SECRET=sua_chave_secreta_super_segura_base64_aqui
-JWT_EXPIRATION=86400000
+JWT_SECRET_KEY=chave_base64_segura_aqui
 ```
 
 🔐 Como gerar uma JWT_SECRET segura?
