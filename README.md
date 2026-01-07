@@ -79,7 +79,7 @@ openssl rand -base64 32
 
 Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
 
-2. Suba o ambiente com Docker Compose
+3. Suba o ambiente com Docker Compose
 Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
 ```bash
 docker-compose up -d --build
