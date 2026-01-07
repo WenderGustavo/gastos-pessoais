@@ -58,27 +58,9 @@ git clone https://github.com/WenderGustavo/gastospessoais.git
 cd gastospessoais
 ```
 
-2. Suba o ambiente com Docker Compose
-Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
-```bash
-docker-compose up -d --build
-```
-
-3. População Inicial (Seed) 🌱
-Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
-
-Use estas credenciais para testar no Swagger/Postman:
-
-| Perfil | Email       | Senha    |
-|--------|-------------|----------|
-| Admin  | admin@.com  | 12345678 |
-| User   | user@.com   | 12345678 |
-
-## ⚙️ Configuração e Variáveis de Ambiente
-
 Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
 
-### 1. Crie o arquivo `.env`
+### 2. Crie o arquivo `.env`
 Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
 
 ```ini
@@ -96,6 +78,32 @@ openssl rand -base64 32
 ```
 
 Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
+
+2. Suba o ambiente com Docker Compose
+Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
+```bash
+docker-compose up -d --build
+```
+
+Esse comando irá:
+
+Buildar a aplicação Spring Boot
+
+Subir PostgreSQL, Redis, Prometheus e Grafana
+
+Executar migrations (Flyway)
+
+Inicializar o sistema
+
+3. População Inicial (Seed) 🌱
+Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
+
+Use estas credenciais para testar no Swagger/Postman:
+
+| Perfil | Email       | Senha    |
+|--------|-------------|----------|
+| Admin  | admin@.com  | 12345678 |
+| User   | user@.com   | 12345678 |
 
 ## 📖 Guia de Requisições (Swagger & Testes)
 
