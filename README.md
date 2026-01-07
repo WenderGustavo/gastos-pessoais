@@ -54,7 +54,7 @@ A aplicação é totalmente containerizada. Você não precisa ter Java ou Postg
 
 1. Clone o repositório(Você precisa ter o git instalado)
 ```bash
-git clone https://github.com/WenderGustavo/gastospessoais.git
+git clone https://github.com/WenderGustavo/gastos-pessoais.git
 ```
 ```bash
 cd gastospessoais
