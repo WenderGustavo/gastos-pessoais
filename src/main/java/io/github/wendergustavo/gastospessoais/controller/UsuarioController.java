@@ -116,7 +116,7 @@ public class UsuarioController implements GenericController {
         return ResponseEntity.ok(gastos);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     @Operation(
             summary = "Listar usuários",
