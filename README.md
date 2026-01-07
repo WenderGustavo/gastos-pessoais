@@ -57,7 +57,7 @@ A aplicação é totalmente containerizada. Você não precisa ter Java ou Postg
 git clone https://github.com/WenderGustavo/gastos-pessoais.git
 ```
 ```bash
-cd gastospessoais
+cd gastos-pessoais
 ```
 
 Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
