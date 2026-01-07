@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.github.wendergustavo.gastospessoais.dto.usuario.UsuarioDetailsDTO;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,17 @@ public class JwtService {
 
     @Value("${security.jwt.expiration}")
     private long expiration;
+
+    @PostConstruct
+    void validarJwt() {
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new IllegalStateException("JWT_SECRET_KEY não configurado");
+        }
+        if (expiration <= 0) {
+            throw new IllegalStateException("JWT expiration inválida");
+        }
+    }
+
 
     public String gerarToken(UsuarioDetailsDTO usuario) {
         log.info("Gerando token para usuário {}", usuario.email());

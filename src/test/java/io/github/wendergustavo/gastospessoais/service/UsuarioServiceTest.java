@@ -147,8 +147,6 @@ class UsuarioServiceTest {
         verify(usuarioValidator).validar(usuario);
     }
 
-
-
     @Test
     @DisplayName("Deve retornar usuário quando encontrado")
     void deveBuscarUsuarioPorId() {

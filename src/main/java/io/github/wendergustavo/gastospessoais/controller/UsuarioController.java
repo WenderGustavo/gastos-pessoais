@@ -27,24 +27,24 @@ public class UsuarioController implements GenericController {
     private final UsuarioService usuarioService;
 
 
-    @PostMapping("/cadastro")
-    @Operation(summary = "Auto-cadastro", description = "Cria um usuário comum (USER). Não requer autenticação.")
-    public ResponseEntity<Void> cadastrarSe(@RequestBody @Valid CadastroUsuarioDTO dto) {
+        @PostMapping("/cadastro")
+        @Operation(summary = "Auto-cadastro", description = "Cria um usuário comum (USER). Não requer autenticação.")
+        public ResponseEntity<Void> cadastrarSe(@RequestBody @Valid CadastroUsuarioDTO dto) {
 
-        UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarProprioUsuario(dto);
-        URI location = gerarHeaderLocation(usuarioSalvo.id());
-        return ResponseEntity.created(location).build();
-    }
+            UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarProprioUsuario(dto);
+            URI location = gerarHeaderLocation(usuarioSalvo.id());
+            return ResponseEntity.created(location).build();
+        }
 
-    @PostMapping("/gestao")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "Criar Usuário (Admin)", description = "Permite que um Admin crie outros usuários (inclusive Admins).")
-    public ResponseEntity<Void> criarUsuarioPeloAdmin(@RequestBody @Valid UsuarioDTO dto) {
+        @PostMapping("/gestao")
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @Operation(summary = "Criar Usuário (Admin)", description = "Permite que um Admin crie outros usuários (inclusive Admins).")
+        public ResponseEntity<Void> criarUsuarioPeloAdmin(@RequestBody @Valid UsuarioDTO dto) {
 
-        UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarPeloAdmin(dto);
-        URI location = gerarHeaderLocation(usuarioSalvo.id());
-        return ResponseEntity.created(location).build();
-    }
+            UsuarioResponseDTO usuarioSalvo = usuarioService.cadastrarPeloAdmin(dto);
+            URI location = gerarHeaderLocation(usuarioSalvo.id());
+            return ResponseEntity.created(location).build();
+        }
 
     @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
     @GetMapping("/{id}")
