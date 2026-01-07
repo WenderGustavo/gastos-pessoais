@@ -49,29 +49,6 @@ O sistema possui controle de acesso rigoroso dividido em dois perfis:
 
 ---
 
-## ⚙️ Configuração e Variáveis de Ambiente
-
-Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
-
-### 1. Crie o arquivo `.env`
-Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
-
-```ini
-# Configurações do Banco de Dados (Docker)
-SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/gasto
-SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=postgres
-JWT_SECRET_KEY=chave_base64_segura_aqui
-```
-
-🔐 Como gerar uma JWT_SECRET segura?
-Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash) (Opcional):
-```bash
-openssl rand -base64 32
-```
-
-Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
-
 🐳 Como Rodar (Passo a Passo)
 A aplicação é totalmente containerizada. Você não precisa ter Java ou Postgres instalados na sua máquina, apenas o Docker.
 
@@ -97,6 +74,28 @@ Use estas credenciais para testar no Swagger/Postman:
 | Admin  | admin@.com  | 12345678 |
 | User   | user@.com   | 12345678 |
 
+## ⚙️ Configuração e Variáveis de Ambiente
+
+Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
+
+### 1. Crie o arquivo `.env`
+Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
+
+```ini
+# Configurações do Banco de Dados (Docker)
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/gasto
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+JWT_SECRET_KEY=chave_base64_segura_aqui
+```
+
+🔐 Como gerar uma JWT_SECRET segura?
+Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash) (Opcional):
+```bash
+openssl rand -base64 32
+```
+
+Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
 
 ## 📖 Guia de Requisições (Swagger & Testes)
 
