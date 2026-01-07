@@ -10,7 +10,8 @@ public record CadastroUsuarioDTO(
         String nome,
         @Email
         String email,
-        @NotBlank @Size(min = 8)
+        @NotBlank
+        @Size(min = 8, max = 128)
         String senha
 ) {
 }
