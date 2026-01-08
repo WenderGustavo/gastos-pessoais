@@ -1,12 +1,12 @@
 package io.github.wendergustavo.gastospessoais.controller.common;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.github.wendergustavo.gastospessoais.dto.commom.ErroCampo;
 import io.github.wendergustavo.gastospessoais.dto.commom.ErroResposta;
-import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
-import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
-import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
+import io.github.wendergustavo.gastospessoais.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,6 +43,34 @@ public class GlobalExceptionHandler {
     public ErroResposta handleRegistroDuplicado(RegistroDuplicadoException e){
         log.warn("Registro duplicado: {}", e.getMessage());
         return ErroResposta.conflito(e.getMessage());
+    }
+
+    @ExceptionHandler(UsuarioIdNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroResposta handleUsuarioNaoEncontrado(UsuarioIdNaoEncontradoException e){
+        log.warn("Usuário não encontrado: {}", e.getMessage());
+
+        return new ErroResposta(
+                HttpStatus.NOT_FOUND.value(),
+                "Usuário não encontrado.",
+                List.of(new ErroCampo("idUsuario", e.getMessage()))
+        );
+    }
+
+    @ExceptionHandler(UsuarioEmailNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroResposta handleUsuarioEmailNaoEncontrado(
+            UsuarioEmailNaoEncontradoException e) {
+
+        log.warn("Usuário não encontrado por e-mail: {}", e.getMessage());
+
+        return new ErroResposta(
+                HttpStatus.NOT_FOUND.value(),
+                "Usuário não encontrado.",
+                List.of(
+                        new ErroCampo("email", e.getMessage())
+                )
+        );
     }
 
     @ExceptionHandler(OperacaoNaoPermitidaException.class)
@@ -86,6 +114,42 @@ public class GlobalExceptionHandler {
                         "autenticacao",
                         "Email ou senha incorretos"
                 ))
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResposta handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+
+        Throwable causa = e.getCause();
+
+        if (causa instanceof InvalidFormatException ife) {
+
+            String campo = ife.getPath().isEmpty()
+                    ? "payload"
+                    : ife.getPath().get(0).getFieldName();
+
+            String mensagem = String.format(
+                    "Valor inválido para o campo '%s'. Formato esperado: %s",
+                    campo,
+                    ife.getTargetType().getSimpleName()
+            );
+
+            log.warn("Erro de desserialização no campo '{}': {}", campo, ife.getOriginalMessage());
+
+            return new ErroResposta(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Payload inválido.",
+                    List.of(new ErroCampo(campo, mensagem))
+            );
+        }
+
+        log.warn("Erro de leitura do corpo da requisição: {}", e.getMessage());
+
+        return new ErroResposta(
+                HttpStatus.BAD_REQUEST.value(),
+                "Payload inválido.",
+                List.of(new ErroCampo("payload", "O corpo da requisição está malformado."))
         );
     }
 
