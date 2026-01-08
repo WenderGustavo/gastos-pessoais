@@ -28,6 +28,7 @@ O sistema implementa autenticação robusta via **JWT (JSON Web Token)** e difer
 * **Gerenciamento de Dados:** Flyway (Migrations)
 * **Segurança:** Spring Security + JWT Stateless
 * **Containerização:** Docker & Docker Compose
+*  **CI:** GitHub Actions (build, execução de testes automatizados e validações em pipeline)
 * **Observabilidade:** Spring Actuator, Prometheus e Grafana
 * **Documentação:** Swagger (OpenAPI)
 
