@@ -178,13 +178,7 @@ public class UsuarioService {
         return usuarioMapper.toListResponseDTO(usuarios);
     }
 
-
     @Transactional(readOnly = true)
-    @Cacheable(
-            value = "usuarios",
-            key = "#email",
-            unless = "#result == null"
-    )
     public Optional<Usuario> obterPorEmail(String email) {
 
         log.info("Buscando usuário por email={}", email);
