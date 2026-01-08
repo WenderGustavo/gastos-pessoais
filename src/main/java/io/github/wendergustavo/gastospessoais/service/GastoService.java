@@ -9,6 +9,7 @@ import io.github.wendergustavo.gastospessoais.entity.Gasto;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
 import io.github.wendergustavo.gastospessoais.exceptions.GastoNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
+import io.github.wendergustavo.gastospessoais.exceptions.UsuarioIdNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.repository.GastoRepository;
 import io.github.wendergustavo.gastospessoais.repository.UsuarioRepository;
@@ -49,7 +50,7 @@ public class GastoService {
         Usuario usuarioDono = usuarioRepository.findById(idDonoGasto)
                 .orElseThrow(() -> {
                     log.error("Usuário não encontrado: {}", idDonoGasto);
-                    return new IllegalArgumentException("User not found (ID: " + idDonoGasto + ")");
+                    return new UsuarioIdNaoEncontradoException(idDonoGasto);
                 });
 
         Gasto gasto = gastoMapper.toEntity(dto);
