@@ -183,12 +183,16 @@ class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar um usuário e encodar nova senha quando alterada")
+    @DisplayName("Deve atualizar usuário e encodar nova senha quando informada")
     void deveAtualizarUsuarioComSenhaAlterada() {
+
         UUID id = UUID.randomUUID();
 
-        var dto = new AtualizarUsuarioDTO("Novo Nome", "novo@email.com",
-                "senhaNova123");
+        var dto = new AtualizarUsuarioDTO(
+                "Novo Nome",
+                "novo@email.com",
+                "senhaNova123"
+        );
 
         var usuarioExistente = new Usuario();
         usuarioExistente.setId(id);
@@ -196,26 +200,33 @@ class UsuarioServiceTest {
         usuarioExistente.setEmail("antigo@email.com");
         usuarioExistente.setSenha("senhaAntigaHASH");
 
-        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
-        when(encoder.encode("senhaNova123")).thenReturn("senhaNovaHASH");
+        when(usuarioRepository.findById(id))
+                .thenReturn(Optional.of(usuarioExistente));
 
-        var usuarioSalvo = new Usuario();
-        usuarioSalvo.setId(id);
-        usuarioSalvo.setNome("Novo Nome");
-        usuarioSalvo.setEmail("novo@email.com");
-        usuarioSalvo.setSenha("senhaNovaHASH");
+        when(usuarioValidator.senhaValida("senhaNova123"))
+                .thenReturn(true);
 
-        when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioSalvo);
-        when(usuarioMapper.toResponseDTO(usuarioSalvo))
-                .thenReturn(new UsuarioResponseDTO(id, "Novo Nome", "novo@email.com", Roles.USER));
+        when(encoder.encode("senhaNova123"))
+                .thenReturn("senhaNovaHASH");
+
+        when(usuarioRepository.save(usuarioExistente))
+                .thenReturn(usuarioExistente);
+
+        when(usuarioMapper.toResponseDTO(usuarioExistente))
+                .thenReturn(new UsuarioResponseDTO(
+                        id,
+                        "Novo Nome",
+                        "novo@email.com",
+                        Roles.USER
+                ));
 
         var result = usuarioService.atualizar(id, dto);
 
         assertThat(result).isNotNull();
         assertThat(result.email()).isEqualTo("novo@email.com");
 
+        verify(usuarioValidator).senhaValida("senhaNova123");
         verify(encoder).encode("senhaNova123");
-
         verify(usuarioRepository).save(usuarioExistente);
     }
 
@@ -224,8 +235,7 @@ class UsuarioServiceTest {
     void deveLancarExcecaoSeIdForNulo() {
         AtualizarUsuarioDTO usuarioDTO = new AtualizarUsuarioDTO("Nome", "email@email.com", "senha");
         assertThatThrownBy(() -> usuarioService.atualizar(null, usuarioDTO))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("O id do usuario não pode ser nulo.");
+                .isInstanceOf(UsuarioIdNaoEncontradoException.class);
     }
 
     @Test
@@ -246,29 +256,45 @@ class UsuarioServiceTest {
 
         UUID id = UUID.randomUUID();
 
-        var dto = new AtualizarUsuarioDTO("Wender", "teste@gmail.com",
-                "senhaAntigaHASH");
+        var dto = new AtualizarUsuarioDTO(
+                "Wender",
+                "teste@gmail.com",
+                "SenhaValida123"
+        );
 
         var usuarioExistente = new Usuario();
         usuarioExistente.setId(id);
         usuarioExistente.setNome("Wender");
         usuarioExistente.setEmail("teste@gmail.com");
-        usuarioExistente.setSenha("senhaAntigaHASH");
+        usuarioExistente.setSenha("SenhaValida123");
 
         when(usuarioRepository.findById(id))
                 .thenReturn(Optional.of(usuarioExistente));
+
+        when(usuarioValidator.senhaValida("SenhaValida123"))
+                .thenReturn(true);
+
+        when(encoder.matches("SenhaValida123", "SenhaValida123"))
+                .thenReturn(true);
 
         when(usuarioRepository.save(usuarioExistente))
                 .thenReturn(usuarioExistente);
 
         when(usuarioMapper.toResponseDTO(usuarioExistente))
-                .thenReturn(new UsuarioResponseDTO(id, "Wender", "teste@gmail.com", Roles.USER));
+                .thenReturn(new UsuarioResponseDTO(
+                        id,
+                        "Wender",
+                        "teste@gmail.com",
+                        Roles.USER
+                ));
 
         var result = usuarioService.atualizar(id, dto);
 
         assertThat(result).isNotNull();
 
         verify(encoder, never()).encode(anyString());
+
+        verify(encoder).matches("SenhaValida123", "SenhaValida123");
     }
 
 
