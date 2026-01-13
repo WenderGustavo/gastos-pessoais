@@ -90,7 +90,7 @@ class UsuarioServiceTest {
                 .extracting(UsuarioResponseDTO::email)
                 .isEqualTo("teste@gmail.com");
 
-        verify(usuarioValidator).validar(usuario);
+        verify(usuarioValidator).validarParaCadastro(usuario);
         verify(encoder).encode("123456789");
         verify(usuarioRepository).save(usuario);
     }
@@ -107,12 +107,12 @@ class UsuarioServiceTest {
         when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
 
         doThrow(new RegistroDuplicadoException("Email already in use."))
-                .when(usuarioValidator).validar(usuario);
+                .when(usuarioValidator).validarParaCadastro(usuario);
 
         assertThatThrownBy(() -> usuarioService.cadastrarPeloAdmin(dto))
                 .isInstanceOf(RegistroDuplicadoException.class);
 
-        verify(usuarioValidator).validar(usuario);
+        verify(usuarioValidator).validarParaCadastro(usuario);
         verify(usuarioRepository, never()).save(any());
     }
 
@@ -144,7 +144,7 @@ class UsuarioServiceTest {
 
         assertThat(result.role()).isEqualTo(Roles.USER);
 
-        verify(usuarioValidator).validar(usuario);
+        verify(usuarioValidator).validarParaCadastro(usuario);
     }
 
     @Test
@@ -225,7 +225,7 @@ class UsuarioServiceTest {
         AtualizarUsuarioDTO usuarioDTO = new AtualizarUsuarioDTO("Nome", "email@email.com", "senha");
         assertThatThrownBy(() -> usuarioService.atualizar(null, usuarioDTO))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("must not be null");
+                .hasMessageContaining("O id do usuario não pode ser nulo.");
     }
 
     @Test
@@ -279,7 +279,7 @@ class UsuarioServiceTest {
         var usuario = new Usuario();
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
+        when(gastoRepository.existsByUsuarioId(usuario.getId())).thenReturn(false);
 
         usuarioService.deletar(id);
 
@@ -293,7 +293,7 @@ class UsuarioServiceTest {
         var usuario = new Usuario();
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
+        when(gastoRepository.existsByUsuarioId(usuario.getId())).thenReturn(true);
 
         assertThatThrownBy(() -> usuarioService.deletar(id))
                 .isInstanceOf(OperacaoNaoPermitidaException.class);
@@ -314,7 +314,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar true quando usuário possuir gastos")
     void deveRetornarTrueQuandoPossuiGasto() {
         var usuario = new Usuario();
-        when(gastoRepository.existsByUsuario(usuario)).thenReturn(true);
+        when(gastoRepository.existsByUsuarioId(usuario.getId())).thenReturn(true);
 
         var result = usuarioService.possuiGasto(usuario);
 
@@ -325,7 +325,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar false quando usuário não possuir gastos")
     void deveRetornarFalseQuandoNaoPossuiGasto() {
         var usuario = new Usuario();
-        when(gastoRepository.existsByUsuario(usuario)).thenReturn(false);
+        when(gastoRepository.existsByUsuarioId(usuario.getId())).thenReturn(false);
 
         var result = usuarioService.possuiGasto(usuario);
 
@@ -379,7 +379,7 @@ class UsuarioServiceTest {
     void deveLancarQuandoEmailForNulo() {
         assertThatThrownBy(() -> usuarioService.listarGastosPorEmail(null))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("must not be null");
+                .hasMessageContaining("O Email não pode ser nulo");
     }
 
     @Test
