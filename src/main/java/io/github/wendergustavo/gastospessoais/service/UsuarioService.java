@@ -4,7 +4,9 @@ import io.github.wendergustavo.gastospessoais.dto.gasto.GastoResponseDTO;
 import io.github.wendergustavo.gastospessoais.dto.usuario.*;
 import io.github.wendergustavo.gastospessoais.entity.Roles;
 import io.github.wendergustavo.gastospessoais.entity.Usuario;
+import io.github.wendergustavo.gastospessoais.exceptions.CampoInvalidoException;
 import io.github.wendergustavo.gastospessoais.exceptions.OperacaoNaoPermitidaException;
+import io.github.wendergustavo.gastospessoais.exceptions.RegistroDuplicadoException;
 import io.github.wendergustavo.gastospessoais.exceptions.UsuarioIdNaoEncontradoException;
 import io.github.wendergustavo.gastospessoais.mapper.GastoMapper;
 import io.github.wendergustavo.gastospessoais.mapper.UsuarioMapper;
@@ -61,7 +63,7 @@ public class UsuarioService {
     }
 
     private UsuarioResponseDTO salvarInterno(Usuario usuario) {
-        usuarioValidator.validar(usuario);
+        usuarioValidator.validarParaCadastro(usuario);
 
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);
@@ -73,13 +75,12 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "usuarios", key = "#id")
     public UsuarioResponseDTO buscarPorId(UUID id){
 
         log.info("Buscando usuário por id={}", id);
         if(id == null){
             log.error("ID informado é nulo");
-            throw new IllegalArgumentException(id + "User ID must not be null.");
+            throw new IllegalArgumentException(id + "O id do usuario não pode ser nulo.");
         }
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> {
@@ -92,32 +93,38 @@ public class UsuarioService {
 
     @Transactional
     @CacheEvict(value = "usuarios", key = "#id")
-    public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO usuarioDTO){
+    public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO dto) {
 
-        log.info("Atualizando usuário: id={}", id);
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioIdNaoEncontradoException(id));
 
-        if(id == null){
-            log.error("ID informado é nulo");
-            throw  new IllegalArgumentException(id + "User ID must not be null.");
+        if (dto.nome() != null && !dto.nome().isBlank()) {
+            usuario.setNome(dto.nome());
         }
 
-        Usuario usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Usuário não encontrado para atualização: id={}", id);
-                    return new UsuarioIdNaoEncontradoException(id);
-                });
+        if (dto.email() != null && !dto.email().isBlank()
+                && !dto.email().equals(usuario.getEmail())) {
 
-        usuarioMapper.updateEntityFromDTO(usuarioDTO, usuarioExistente);
+            if (usuarioValidator.emailJaExiste(dto.email(), usuario.getId())) {
+                throw new RegistroDuplicadoException("O email já existe.");
+            }
 
-        if (usuarioDTO.senha() != null && !usuarioDTO.senha().isBlank()
-                && !usuarioExistente.getSenha().equals(usuarioDTO.senha())) {
-            usuarioExistente.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
+            usuario.setEmail(dto.email());
         }
 
-        usuarioValidator.validar(usuarioExistente);
+        if (dto.senha() != null && !dto.senha().isBlank()) {
 
-        Usuario salvo = usuarioRepository.save(usuarioExistente);
-        log.info("Usuário atualizado com sucesso: id={}", salvo.getId());
+            if (!usuarioValidator.senhaValida(dto.senha())) {
+                throw new CampoInvalidoException(
+                        "senha",
+                        "A senha deve ter entre 8 a 128 caracteres."
+                );
+            }
+
+            usuario.setSenha(passwordEncoder.encode(dto.senha()));
+        }
+
+        Usuario salvo = usuarioRepository.save(usuario);
         return usuarioMapper.toResponseDTO(salvo);
     }
 
@@ -130,7 +137,7 @@ public class UsuarioService {
         if(id == null){
             log.error("ID informado é nulo");
 
-            throw new IllegalArgumentException(id + "User ID must not be null.");
+            throw new IllegalArgumentException(id + "O id do usuario não pode ser nulo.");
         }
         Usuario usuario = usuarioRepository.findById(id)
 
@@ -143,7 +150,7 @@ public class UsuarioService {
         if(possuiGasto(usuario)){
 
             log.warn("Tentativa de deletar usuário com gastos: id={}", id);
-            throw new OperacaoNaoPermitidaException("It is not allowed to delete a user who has expenses.");
+            throw new OperacaoNaoPermitidaException("Não é permitido deletar um usuario com gastos.");
         }
 
         usuarioRepository.delete(usuario);
@@ -158,7 +165,7 @@ public class UsuarioService {
         if (email == null || email.isBlank()) {
 
             log.error("Email informado é nulo ou vazio");
-            throw new IllegalArgumentException("Email must not be null or empty");
+            throw new IllegalArgumentException("O Email não pode ser nulo");
         }
         return gastoRepository.findByUsuarioEmailOrderByCreatedAtDesc(email)
                 .stream()
@@ -192,6 +199,6 @@ public class UsuarioService {
     }
 
     public boolean possuiGasto(Usuario usuario){
-        return gastoRepository.existsByUsuario(usuario);
+        return gastoRepository.existsByUsuarioId(usuario.getId());
     }
 }
