@@ -121,7 +121,9 @@ public class UsuarioService {
                 );
             }
 
-            usuario.setSenha(passwordEncoder.encode(dto.senha()));
+            if (!passwordEncoder.matches(dto.senha(), usuario.getSenha())) {
+                usuario.setSenha(passwordEncoder.encode(dto.senha()));
+            }
         }
 
         Usuario salvo = usuarioRepository.save(usuario);
