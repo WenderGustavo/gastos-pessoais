@@ -21,15 +21,15 @@ public class GastoValidator {
     public void validar(Gasto gasto) {
 
         if (!validarValorPositivo(gasto)) {
-            throw new CampoInvalidoException("valor", "Value must be greater than zero.");
+            throw new CampoInvalidoException("valor", "Valor deve ser maior que 0.");
         }
 
         if (!validarUsuarioPreenchido(gasto)) {
-            throw new CampoInvalidoException("usuario", "User not found or not informed.");
+            throw new CampoInvalidoException("usuario", "Usuario não foi informado.");
         }
 
         if (!validarGastoDuplicado(gasto)) {
-            throw new RegistroDuplicadoException("Duplicate spending is not allowed.");
+            throw new RegistroDuplicadoException("Gasto duplicado.");
         }
     }
 
