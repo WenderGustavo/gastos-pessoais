@@ -44,7 +44,7 @@ O sistema possui controle de acesso rigoroso dividido em dois perfis:
 * **Gestão de Gastos:** Pode criar, editar ou remover gastos em nome de outros usuários.
 
 ### 👤 USER (Usuário Comum)
-* **Auto-cadastro:** Pode criar sua própria conta via rota pública.
+* **Auto-cadastro:** Pode criar sua própria conta via rota pública ou criar users comuns.
 * **Privacidade:** Acessa e gerencia **apenas** os seus próprios gastos.
 * **Segurança:** Não tem permissão para visualizar dados de outros usuários.
 
