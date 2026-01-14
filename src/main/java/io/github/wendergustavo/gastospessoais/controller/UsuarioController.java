@@ -64,7 +64,10 @@ public class UsuarioController implements GenericController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize(
+            "hasAuthority('ADMIN') or #id.equals(authentication.principal.id)"
+    )
+
     @PutMapping("/{id}")
     @Operation(
             summary = "Atualizar usuário",
@@ -82,7 +85,10 @@ public class UsuarioController implements GenericController {
         return ResponseEntity.ok(usuarioResponseDTO);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize(
+            "hasAuthority('ADMIN') or #id.equals(authentication.principal.id)"
+    )
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Deletar usuário",
@@ -100,7 +106,7 @@ public class UsuarioController implements GenericController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasAuthority('ADMIN') or #email == authentication.name")
     @GetMapping("/email/{email}")
     @Operation(
             summary = "Listar gastos do usuário",

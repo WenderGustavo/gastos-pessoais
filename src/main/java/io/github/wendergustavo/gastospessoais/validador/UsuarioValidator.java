@@ -16,21 +16,19 @@ public class UsuarioValidator {
 
     private final UsuarioRepository repository;
 
-    public void validar(Usuario usuario){
+    public void validarParaCadastro(Usuario usuario){
 
         if(emailJaExiste(usuario.getEmail(),usuario.getId())){
-            throw new RegistroDuplicadoException("Email already in use.");
+            throw new RegistroDuplicadoException("O email já existe.");
         }
 
         if (!senhaValida(usuario.getSenha())) {
-            throw new CampoInvalidoException("senha","Password must be between 8 and 128 characters.");
+            throw new CampoInvalidoException("senha","A senha deve ter entre 8 a 128 caracteres.");
         }
     }
 
     public boolean emailJaExiste(String email, UUID id) {
-        return repository.findByEmail(email)
-                .filter(u -> id == null || !u.getId().equals(id))
-                .isPresent();
+        return repository.existsByEmailAndIdNot(email, id);
     }
 
     public boolean senhaValida(String senha){

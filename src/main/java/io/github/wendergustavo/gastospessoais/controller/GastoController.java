@@ -44,7 +44,7 @@ public class GastoController implements GenericController {
         return ResponseEntity.created(location).build();
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ADMIN') or @gastoSecurity.isOwner(#id)")
     @GetMapping("/{id}")
     @Operation(
             summary = "Buscar gasto por ID",
@@ -60,7 +60,7 @@ public class GastoController implements GenericController {
         return ResponseEntity.ok(gastoSimplesDTO);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ADMIN') or @gastoSecurity.isOwner(#id)")
     @PutMapping("/{id}")
     @Operation(
             summary = "Atualizar gasto",
@@ -77,7 +77,7 @@ public class GastoController implements GenericController {
         return ResponseEntity.ok(gastoSimplesDTO);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ADMIN') or @gastoSecurity.isOwner(#id)")
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Excluir gasto",
@@ -93,7 +93,7 @@ public class GastoController implements GenericController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     @Operation(
             summary = "Listar gastos",

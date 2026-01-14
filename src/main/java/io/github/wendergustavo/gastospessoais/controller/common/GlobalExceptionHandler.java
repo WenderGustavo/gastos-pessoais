@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -37,6 +38,14 @@ public class GlobalExceptionHandler {
                 erros
         );
     }
+
+    @ExceptionHandler(GastoNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroResposta handleGastoNaoEncontrado(GastoNaoEncontradoException e) {
+        log.warn("Gasto não encontrado: {}", e.getMessage());
+        return ErroResposta.respostaPadrao(e.getMessage());
+    }
+
 
     @ExceptionHandler(RegistroDuplicadoException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -73,12 +82,21 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(OperacaoNaoPermitidaException.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErroResposta handleOperacaoNaoPermitida(OperacaoNaoPermitidaException e){
+    public ErroResposta handleIllegalArgument(IllegalArgumentException e) {
+        log.warn("Erro de argumento: {}", e.getMessage());
+        return ErroResposta.respostaPadrao(e.getMessage());
+    }
+
+
+    @ExceptionHandler(OperacaoNaoPermitidaException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResposta handleOperacaoNaoPermitida(OperacaoNaoPermitidaException e) {
         log.warn("Operação não permitida: {}", e.getMessage());
         return ErroResposta.respostaPadrao(e.getMessage());
     }
+
 
     @ExceptionHandler(CampoInvalidoException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -152,6 +170,34 @@ public class GlobalExceptionHandler {
                 List.of(new ErroCampo("payload", "O corpo da requisição está malformado."))
         );
     }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResposta handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException e) {
+
+        String campo = e.getName();
+        String tipo = e.getRequiredType() != null
+                ? e.getRequiredType().getSimpleName()
+                : "desconhecido";
+
+        String mensagem = String.format(
+                "Valor inválido para o campo '%s'. Formato esperado: %s",
+                campo,
+                tipo
+        );
+
+        log.warn("Erro de conversão no campo '{}': valor '{}'",
+                campo, e.getValue());
+
+        return new ErroResposta(
+                HttpStatus.BAD_REQUEST.value(),
+                "Parâmetro inválido.",
+                List.of(new ErroCampo(campo, mensagem))
+        );
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

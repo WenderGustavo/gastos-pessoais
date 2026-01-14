@@ -111,7 +111,7 @@ class GastoRepositoryTest {
 
         Gasto gastSalvo = gastoRepository.save(gasto);
 
-        boolean existe = gastoRepository.existsByUsuario(gastSalvo.getUsuario());
+        boolean existe = gastoRepository.existsByUsuarioId(gastSalvo.getUsuario().getId());
         assertThat(existe).isTrue();
     }
 
@@ -119,7 +119,7 @@ class GastoRepositoryTest {
     @DisplayName("Deve retorna falso se usuario não possui gastos")
     void deveRetornarFalsoSeUsuarioNaoPossuiGasto() {
 
-        boolean existe = gastoRepository.existsByUsuario(usuario);
+        boolean existe = gastoRepository.existsByUsuarioId(usuario.getId());
         assertThat(existe).isFalse();
     }
 
