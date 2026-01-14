@@ -95,26 +95,39 @@ public class UsuarioService {
     @CacheEvict(value = "usuarios", key = "#id")
     public UsuarioResponseDTO atualizar(UUID id, AtualizarUsuarioDTO dto) {
 
+        log.info("Iniciando atualização do usuário. id={}", id);
+
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioIdNaoEncontradoException(id));
+                .orElseThrow(() -> {
+                    log.warn("Usuário não encontrado para atualização. id={}", id);
+                    return new UsuarioIdNaoEncontradoException(id);
+                });
 
         if (dto.nome() != null && !dto.nome().isBlank()) {
+            log.debug("Atualizando nome do usuário. id={}", id);
             usuario.setNome(dto.nome());
         }
 
         if (dto.email() != null && !dto.email().isBlank()
                 && !dto.email().equals(usuario.getEmail())) {
 
+            log.debug("Solicitada alteração de email. id={}, novoEmail={}", id, dto.email());
+
             if (usuarioValidator.emailJaExiste(dto.email(), usuario.getId())) {
+                log.warn("Tentativa de atualizar para email já existente. id={}, email={}", id, dto.email());
                 throw new RegistroDuplicadoException("O email já existe.");
             }
 
             usuario.setEmail(dto.email());
+            log.info("Email atualizado com sucesso. id={}", id);
         }
 
         if (dto.senha() != null && !dto.senha().isBlank()) {
 
+            log.debug("Solicitada alteração de senha. id={}", id);
+
             if (!usuarioValidator.senhaValida(dto.senha())) {
+                log.warn("Senha inválida informada. id={}", id);
                 throw new CampoInvalidoException(
                         "senha",
                         "A senha deve ter entre 8 a 128 caracteres."
@@ -123,12 +136,19 @@ public class UsuarioService {
 
             if (!passwordEncoder.matches(dto.senha(), usuario.getSenha())) {
                 usuario.setSenha(passwordEncoder.encode(dto.senha()));
+                log.info("Senha atualizada com sucesso. id={}", id);
+            } else {
+                log.debug("Nova senha igual à senha atual. Nenhuma alteração realizada. id={}", id);
             }
         }
 
         Usuario salvo = usuarioRepository.save(usuario);
+
+        log.info("Usuário atualizado com sucesso. id={}", id);
+
         return usuarioMapper.toResponseDTO(salvo);
     }
+
 
     @Transactional
     @CacheEvict(value = "usuarios", key = "#id")
