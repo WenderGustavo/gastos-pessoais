@@ -135,6 +135,21 @@ Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou Us
 ```
 3. Autorizar: No Swagger, clique no botão Authorize (cadeado) no  lado superior direito e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
+### 3. 📘 Como Usar os Endpoints (Swagger & Postman)
+
+Após realizar o login e autorizar o token JWT, você já pode consumir todos os endpoints protegidos da API.
+
+🧭 Utilizando o Swagger (OpenAPI)
+
+Acesse a documentação interativa em:
+👉 http://localhost:8080/swagger-ui.html
+
+🔓 Autorização (Obrigatório)
+
+Clique no botão Authorize 🔒 (canto superior direito)
+
+Insira o token no formato:
+
 📂 Estrutura do Projeto
 O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
 ```
