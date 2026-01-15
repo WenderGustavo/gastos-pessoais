@@ -147,56 +147,46 @@ Response
 
 2️⃣ Autorização no Swagger
 
-Clique no botão Authorize 🔒 (canto superior direito)
+Clique no botão Authorize 🔒 (canto superior direito).
 
-Insira o token no formato:
+Insira o token no formato: Bearer SEU_TOKEN_JWT_AQUI
 
-Bearer SEU_TOKEN_JWT_AQUI
+Clique em Authorize e depois em Close.
+
+Agora as rotas protegidas estarão acessíveis.
 
 Clique em Authorize e depois em Close
 
 A partir desse momento, todas as rotas protegidas ficarão acessíveis de acordo com o perfil do usuário (ADMIN ou USER).
 
-🧭 Como Usar os Endpoints no Swagger
+🧭 Como Usar os Endpoints
+Escolha um Controller (ex: Gastos Controller).
 
-Escolha um Controller (ex: Gastos Controller)
+Selecione o endpoint desejado.
 
-Selecione o endpoint desejado
+Clique em Try it out.
 
-Clique em Try it out
+Preencha os parâmetros ou o Request Body.
 
-Preencha os parâmetros ou o Request Body
-
-Clique em Execute
-
-Analise:
-
-Status HTTP
-
-Response Body
-
-Headers retornados
+Clique em Execute.
 
 🧾 Exemplo: Criar um Gasto
+Endpoint: POST /gastos
 
-Endpoint
-POST /gastos
-
-Request Body
+Request Body:
+```json
 {
   "descricao": "Almoço",
   "valor": 35.90,
   "categoria": "ALIMENTACAO",
   "data": "2026-01-10"
 }
-
+```
 🔹 USER: cria gasto apenas para si
 🔹 ADMIN: pode criar gastos para outros usuários (quando aplicável)
 
 📊 Exemplo: Listar Gastos
-
-Endpoint
-GET /gastos
+Endpoint: GET /gastos
 
 USER: retorna apenas seus próprios gastos
 ADMIN: pode acessar gastos globais ou por usuário específico
@@ -211,53 +201,46 @@ ADMIN: pode acessar gastos globais ou por usuário específico
 
 📬 Utilizando a API com Postman
 
-Caso prefira usar o Postman, siga os passos abaixo.
+Se preferir usar o Postman:
 
-🔐 Login no Postman
+1. Login
 
-POST
-http://localhost:8080/auth/login
+URL: http://localhost:8080/auth/login (POST)
 
-Body (JSON)
+Body (JSON):
+```json
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
-
+```
 Copie o token retornado.
 
-🔑 Autorização no Postman
+2. Autorização (Em rotas protegidas)
 
-Em cada requisição protegida:
+Vá na aba Authorization.
 
-Aba Authorization
+Tipo: Bearer Token.
 
-Tipo: Bearer Token
+Cole o token gerado no login
 
-Cole o token
+Exemplo: Criar Gasto
+URL: http://localhost:8080/gastos (POST)
 
-Ou via Header manual:
-
-Authorization: Bearer SEU_TOKEN_JWT
-
-🧾 Exemplo: Criar Gasto via Postman
-
-POST
-http://localhost:8080/gastos
-
-Headers
-Authorization: Bearer SEU_TOKEN
-Content-Type: application/json
-
-Body
+Body:
+```json
 {
   "descricao": "Internet",
   "valor": 120.00,
   "categoria": "SERVICOS",
   "data": "2026-01-05"
 }
+```
+Headers
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
 
-📂 Organização Recomendada no Postman
+📂 Organização Recomendada:
 Gastos Pessoais API
 ├── Auth
 │   └── Login
@@ -272,15 +255,13 @@ Gastos Pessoais API
 
 💡 Observações Importantes
 
-O acesso aos endpoints respeita RBAC (Role Based Access Control)
+O acesso aos endpoints respeita RBAC.
+Tokens expirados ou inválidos retornam 401.
+Permissões insuficientes retornam 403.
+Toda a API é stateless.
 
-Tokens expirados ou inválidos retornam 401
-
-Permissões insuficientes retornam 403
-
-Toda a API é stateless (JWT)
-
-Prometheus: http://localhost:9090 
+🔗 Links Úteis
+Prometheus: http://localhost:9090
 Grafana: http://localhost:3000 (Login: admin / admin) 
 Health Check: http://localhost:8080/actuator/health 
 
