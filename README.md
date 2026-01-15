@@ -226,8 +226,9 @@ Gastos Pessoais API
 ├── model # Entidades JPA 
 ├── dto # DTOs 
 ├── mapper # MapStruct 
-├── validator # Validações 
-├── security # JWT e Acesso └── exception # Handler global
+├── validator # Validações
+├── security # JWT e Acesso 
+└── exception # Exceções
 ```
 
 ---
