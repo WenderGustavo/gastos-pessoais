@@ -244,7 +244,7 @@ Gastos Pessoais API
 * **Prometheus:** [http://localhost:9090](http://localhost:9090)
 * **Grafana:** [http://localhost:3000](http://localhost:3000) (Login: admin / admin)
 * **Health Check:** [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-* **PgAdmin:** [http://localhost:15432](http://localhost:15432)(Email: admin@admin.com / admin)
+* **PgAdmin:** [http://localhost:15432](http://localhost:15432) (Email: admin@admin.com / admin)
 
 ---
 
