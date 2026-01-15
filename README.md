@@ -110,14 +110,24 @@ Use estas credenciais para testar no Swagger/Postman:
 
 ## 📖 Guia de Requisições (Swagger & Testes)
 
-A documentação interativa da API está disponível em:  
-👉 http://localhost:8080/swagger-ui.html
-
-### 🔐 Fluxo de Autenticação
-
+A API possui documentação interativa via Swagger (OpenAPI), permitindo testar todos os endpoints diretamente pelo navegador, além de suporte completo para testes via Postman.
 1. **Login**  
 Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou User (tabela acima):
 
+👉 Swagger UI:
+http://localhost:8080/swagger-ui.html
+
+🔐 Fluxo de Autenticação (Obrigatório)
+
+Todas as rotas protegidas exigem autenticação via JWT.
+
+1️⃣ Login
+
+Faça uma requisição POST para o endpoint:
+
+POST /auth/login
+
+Request Body
 ```json
 {
   "email": "admin@.com",
@@ -126,51 +136,152 @@ Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou Us
 ```
 
 2. Pegar o Token: A API retornará um JSON com o token:
- 
+
+Response
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
 
 ```
-3. Autorizar: No Swagger, clique no botão Authorize (cadeado) no  lado superior direito e insira o token no formato: Bearer eyJhbGciOiJIUzI1NiIsIn....
 
-### 3. 📘 Como Usar os Endpoints (Swagger & Postman)
-
-Após realizar o login e autorizar o token JWT, você já pode consumir todos os endpoints protegidos da API.
-
-🧭 Utilizando o Swagger (OpenAPI)
-
-Acesse a documentação interativa em:
-👉 http://localhost:8080/swagger-ui.html
-
-🔓 Autorização (Obrigatório)
+2️⃣ Autorização no Swagger
 
 Clique no botão Authorize 🔒 (canto superior direito)
 
 Insira o token no formato:
 
-📂 Estrutura do Projeto
-O projeto segue uma arquitetura em camadas (Layered Architecture) com forte influência de Clean Code e SOLID.
-```
-src/main/java/io/github/wendergustavo/gastospessoais
-├── configuration   # Configs de Beans
-├── controller      # Camada REST
-├── service         # Regras de Negócio
-├── repository      # Persistência
-├── model           # Entidades JPA
-├── dto             # DTOs
-├── mapper          # MapStruct
-├── validator       # Validações
-├── security        # JWT e Acesso
-└── exception       # Handler global
-```
+Bearer SEU_TOKEN_JWT_AQUI
 
-Prometheus: http://localhost:9090
+Clique em Authorize e depois em Close
 
-Grafana: http://localhost:3000 (Login: admin / admin)
+A partir desse momento, todas as rotas protegidas ficarão acessíveis de acordo com o perfil do usuário (ADMIN ou USER).
 
-Health Check: http://localhost:8080/actuator/health
+🧭 Como Usar os Endpoints no Swagger
 
-👨‍💻 Autor
-Desenvolvido por Wender Gustavo.
+Escolha um Controller (ex: Gastos Controller)
+
+Selecione o endpoint desejado
+
+Clique em Try it out
+
+Preencha os parâmetros ou o Request Body
+
+Clique em Execute
+
+Analise:
+
+Status HTTP
+
+Response Body
+
+Headers retornados
+
+🧾 Exemplo: Criar um Gasto
+
+Endpoint
+POST /gastos
+
+Request Body
+{
+  "descricao": "Almoço",
+  "valor": 35.90,
+  "categoria": "ALIMENTACAO",
+  "data": "2026-01-10"
+}
+
+🔹 USER: cria gasto apenas para si
+🔹 ADMIN: pode criar gastos para outros usuários (quando aplicável)
+
+📊 Exemplo: Listar Gastos
+
+Endpoint
+GET /gastos
+
+USER: retorna apenas seus próprios gastos
+ADMIN: pode acessar gastos globais ou por usuário específico
+
+🚫 Possíveis Erros Comuns
+| Status           | Descrição                 |
+| ---------------- | ------------------------- |
+| 401 Unauthorized | Token ausente ou inválido |
+| 403 Forbidden    | Usuário sem permissão     |
+| 400 Bad Request  | Dados inválidos           |
+| 404 Not Found    | Recurso inexistente       |
+
+📬 Utilizando a API com Postman
+
+Caso prefira usar o Postman, siga os passos abaixo.
+
+🔐 Login no Postman
+
+POST
+http://localhost:8080/auth/login
+
+Body (JSON)
+{
+  "email": "admin@.com",
+  "senha": "12345678"
+}
+
+Copie o token retornado.
+
+🔑 Autorização no Postman
+
+Em cada requisição protegida:
+
+Aba Authorization
+
+Tipo: Bearer Token
+
+Cole o token
+
+Ou via Header manual:
+
+Authorization: Bearer SEU_TOKEN_JWT
+
+🧾 Exemplo: Criar Gasto via Postman
+
+POST
+http://localhost:8080/gastos
+
+Headers
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+Body
+{
+  "descricao": "Internet",
+  "valor": 120.00,
+  "categoria": "SERVICOS",
+  "data": "2026-01-05"
+}
+
+📂 Organização Recomendada no Postman
+Gastos Pessoais API
+├── Auth
+│   └── Login
+├── Usuários
+│   ├── Criar Usuário
+│   └── Listar Usuários (ADMIN)
+└── Gastos
+    ├── Criar
+    ├── Listar
+    ├── Atualizar
+    └── Remover
+
+💡 Observações Importantes
+
+O acesso aos endpoints respeita RBAC (Role Based Access Control)
+
+Tokens expirados ou inválidos retornam 401
+
+Permissões insuficientes retornam 403
+
+Toda a API é stateless (JWT)
+
+Prometheus: http://localhost:9090 
+Grafana: http://localhost:3000 (Login: admin / admin) 
+Health Check: http://localhost:8080/actuator/health 
+
+👨‍💻 Autor Desenvolvido por Wender Gustavo.
