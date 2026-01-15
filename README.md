@@ -205,23 +205,6 @@ Se preferir usar o Postman:
 }
 ```
 
-**📂 Estrutura do Projeto:**
-```text
-Gastos Pessoais API
-├── configuration # Configs de Beans
-├── controller # Camada REST 
-├── service # Regras de Negócio 
-├── repository # Persistência 
-├── model # Entidades JPA 
-├── dto # DTOs 
-├── mapper # MapStruct 
-├── validator # Validações
-├── security # JWT e Acesso 
-└── exception # Exceções
-```
-
----
-
 ## 📡 Códigos de Resposta HTTP
 
 A API utiliza códigos HTTP padronizados para indicar o sucesso ou falha das requisições.
@@ -247,6 +230,23 @@ Mapeamento de exceções tratadas pelo `GlobalExceptionHandler`.
 | **409 Conflict** | Conflito | Tentativa de cadastro de dados duplicados (ex: E-mail já cadastrado). |
 | **422 Unprocessable Entity** | Entidade Improcessável | Erro de validação de campos (ex: campo obrigatório nulo, senha curta, data inválida). |
 | **500 Internal Server Error** | Erro Interno | Falha inesperada no servidor. |
+
+**📂 Estrutura do Projeto:**
+```text
+Gastos Pessoais API
+├── configuration # Configs de Beans
+├── controller # Camada REST 
+├── service # Regras de Negócio 
+├── repository # Persistência 
+├── model # Entidades JPA 
+├── dto # DTOs 
+├── mapper # MapStruct 
+├── validator # Validações
+├── security # JWT e Acesso 
+└── exception # Exceções
+```
+
+---
 
 ## 💡 Observações Importantes
 
