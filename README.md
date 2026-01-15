@@ -28,7 +28,7 @@ O sistema implementa autenticação robusta via **JWT (JSON Web Token)** e difer
 * **Gerenciamento de Dados:** Flyway (Migrations)
 * **Segurança:** Spring Security + JWT Stateless
 * **Containerização:** Docker & Docker Compose
-*  **CI:** GitHub Actions (build, execução de testes automatizados e validações em pipeline)
+* **CI:** GitHub Actions (build, execução de testes automatizados e validações em pipeline)
 * **Observabilidade:** Spring Actuator, Prometheus e Grafana
 * **Documentação:** Swagger (OpenAPI)
 
@@ -50,21 +50,24 @@ O sistema possui controle de acesso rigoroso dividido em dois perfis:
 
 ---
 
-🐳 Como Rodar (Passo a Passo)
+## 🐳 Como Rodar (Passo a Passo)
+
 A aplicação é totalmente containerizada. Você não precisa ter Java ou Postgres instalados na sua máquina, apenas o Docker.
 
-1. Clone o repositório(Você precisa ter o git instalado)
+### 1. Clone o repositório
+Você precisa ter o git instalado:
+
 ```bash
-git clone https://github.com/WenderGustavo/gastos-pessoais.git
+git clone [https://github.com/WenderGustavo/gastos-pessoais.git](https://github.com/WenderGustavo/gastos-pessoais.git)
 ```
+
+Entre na pasta do projeto:
 ```bash
 cd gastos-pessoais
 ```
 
-Para rodar o projeto, é **obrigatório** configurar as variáveis de ambiente. O projeto utiliza um arquivo `.env` na raiz para facilitar o uso com Docker.
-
-### 2. Crie o arquivo `.env`
-Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
+### 2. Configure as Variáveis de Ambiente
+Para rodar o projeto, é **obrigatório** configurar as variáveis. Na raiz do projeto, crie um arquivo chamado `.env` e cole o conteúdo abaixo:
 
 ```ini
 # Configurações do Banco de Dados (Docker)
@@ -74,60 +77,51 @@ SPRING_DATASOURCE_PASSWORD=postgres
 JWT_SECRET_KEY=chave_base64_segura_aqui
 ```
 
-🔐 Como gerar uma JWT_SECRET segura?
-Você precisa de uma string codificada em Base64. Você pode gerar executando este comando no terminal (Linux/Mac/Git Bash) (Opcional):
+**🔐 Como gerar uma JWT_SECRET segura?**
+Execute este comando no terminal para gerar uma string Base64:
 ```bash
 openssl rand -base64 32
 ```
+Copie o resultado e cole na variável `JWT_SECRET_KEY` dentro do arquivo `.env`.
 
-Copie o resultado gerado e cole na variável JWT_SECRET dentro do arquivo .env.
-
-3. Suba o ambiente com Docker Compose
+### 3. Suba o ambiente com Docker Compose
 Este comando irá baixar as imagens, compilar a aplicação, subir o Banco, o Redis e o Grafana.
+
 ```bash
 docker-compose up -d --build
 ```
 
 Esse comando irá:
+1. Buildar a aplicação Spring Boot
+2. Subir PostgreSQL, Redis, Prometheus e Grafana
+3. Executar migrations (Flyway)
+4. Inicializar o sistema
 
-Buildar a aplicação Spring Boot
-
-Subir PostgreSQL, Redis, Prometheus e Grafana
-
-Executar migrations (Flyway)
-
-Inicializar o sistema
-
-3. População Inicial (Seed) 🌱
-Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste no banco de dados.
+### 4. População Inicial (Seed) 🌱
+Assim que a aplicação sobe pela primeira vez, um Script Seeder executa automaticamente para criar usuários de teste.
 
 Use estas credenciais para testar no Swagger/Postman:
 
-| Perfil | Email       | Senha    |
-|--------|-------------|----------|
-| Admin  | admin@.com  | 12345678 |
-| User   | user@.com   | 12345678 |
+| Perfil | Email           | Senha    |
+| :---   | :---            | :---     |
+| Admin  | admin@.com      | 12345678 |
+| User   | user@.com       | 12345678 |
+
+---
 
 ## 📖 Guia de Requisições (Swagger & Testes)
 
-A API possui documentação interativa via Swagger (OpenAPI), permitindo testar todos os endpoints diretamente pelo navegador, além de suporte completo para testes via Postman.
-1. **Login**  
-Faça uma requisição `POST` em `/auth/login` com as credenciais de Admin ou User (tabela acima):
+A API possui documentação interativa via Swagger (OpenAPI).
 
-👉 Swagger UI:
-http://localhost:8080/swagger-ui.html
+👉 **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-🔐 Fluxo de Autenticação (Obrigatório)
-
+### 🔐 Fluxo de Autenticação (Obrigatório)
 Todas as rotas protegidas exigem autenticação via JWT.
 
-1️⃣ Login
+**1️⃣ Login**
+Faça uma requisição `POST` em `/auth/login`:
 
-Faça uma requisição POST para o endpoint:
-
-POST /auth/login
-
-Request Body
+**Request Body:**
 ```json
 {
   "email": "admin@.com",
@@ -135,45 +129,35 @@ Request Body
 }
 ```
 
-2. Pegar o Token: A API retornará um JSON com o token:
-
-Response
+**Response (Copie o token):**
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsIn..."
 }
-
 ```
 
-2️⃣ Autorização no Swagger
-
-Clique no botão Authorize 🔒 (canto superior direito).
-
-Insira o token no formato: Bearer SEU_TOKEN_JWT_AQUI
-
-Clique em Authorize e depois em Close.
+**2️⃣ Autorização no Swagger**
+1. Clique no botão **Authorize** 🔒 (canto superior direito).
+2. Insira o token no formato: `Bearer SEU_TOKEN_JWT_AQUI`
+3. Clique em **Authorize** e depois em **Close**.
 
 Agora as rotas protegidas estarão acessíveis.
 
-Clique em Authorize e depois em Close
+---
 
-A partir desse momento, todas as rotas protegidas ficarão acessíveis de acordo com o perfil do usuário (ADMIN ou USER).
+### 🧭 Como Usar os Endpoints
 
-🧭 Como Usar os Endpoints
-Escolha um Controller (ex: Gastos Controller).
+1. Escolha um Controller (ex: `Gastos Controller`).
+2. Selecione o endpoint desejado.
+3. Clique em **Try it out**.
+4. Preencha os parâmetros ou o Request Body.
+5. Clique em **Execute**.
 
-Selecione o endpoint desejado.
+#### 🧾 Exemplo: Criar um Gasto
 
-Clique em Try it out.
+**Endpoint:** `POST /gastos`
 
-Preencha os parâmetros ou o Request Body.
-
-Clique em Execute.
-
-🧾 Exemplo: Criar um Gasto
-Endpoint: POST /gastos
-
-Request Body:
+**Request Body:**
 ```json
 {
   "descricao": "Almoço",
@@ -182,52 +166,47 @@ Request Body:
   "data": "2026-01-10"
 }
 ```
-🔹 USER: cria gasto apenas para si
-🔹 ADMIN: pode criar gastos para outros usuários (quando aplicável)
+* **USER:** cria gasto apenas para si.
+* **ADMIN:** pode criar gastos para outros usuários (quando aplicável).
 
-📊 Exemplo: Listar Gastos
-Endpoint: GET /gastos
+#### 📊 Exemplo: Listar Gastos
+**Endpoint:** `GET /gastos`
 
-USER: retorna apenas seus próprios gastos
-ADMIN: pode acessar gastos globais ou por usuário específico
+---
 
-🚫 Possíveis Erros Comuns
-| Status           | Descrição                 |
-| ---------------- | ------------------------- |
-| 401 Unauthorized | Token ausente ou inválido |
-| 403 Forbidden    | Usuário sem permissão     |
-| 400 Bad Request  | Dados inválidos           |
-| 404 Not Found    | Recurso inexistente       |
+### 🚫 Possíveis Erros Comuns
 
-📬 Utilizando a API com Postman
+| Status | Descrição |
+| :--- | :--- |
+| **401 Unauthorized** | Token ausente ou inválido |
+| **403 Forbidden** | Usuário sem permissão |
+| **400 Bad Request** | Dados inválidos |
+| **404 Not Found** | Recurso inexistente |
+
+---
+
+## 📬 Utilizando a API com Postman
 
 Se preferir usar o Postman:
 
-1. Login
-
-URL: http://localhost:8080/auth/login (POST)
-
-Body (JSON):
+**1. Login**
+* **URL:** `http://localhost:8080/auth/login` (POST)
+* **Body (JSON):**
 ```json
 {
   "email": "admin@.com",
   "senha": "12345678"
 }
 ```
-Copie o token retornado.
 
-2. Autorização (Em rotas protegidas)
+**2. Autorização (Em rotas protegidas)**
+* Vá na aba **Authorization**.
+* Tipo: **Bearer Token**.
+* Cole o token gerado no login.
 
-Vá na aba Authorization.
-
-Tipo: Bearer Token.
-
-Cole o token gerado no login
-
-Exemplo: Criar Gasto
-URL: http://localhost:8080/gastos (POST)
-
-Body:
+**3. Exemplo: Criar Gasto**
+* **URL:** `http://localhost:8080/gastos` (POST)
+* **Body:**
 ```json
 {
   "descricao": "Internet",
@@ -236,11 +215,9 @@ Body:
   "data": "2026-01-05"
 }
 ```
-Headers
-Authorization: Bearer SEU_TOKEN
-Content-Type: application/json
 
-📂 Organização Recomendada:
+**📂 Organização Recomendada:**
+```text
 Gastos Pessoais API
 ├── Auth
 │   └── Login
@@ -252,17 +229,23 @@ Gastos Pessoais API
     ├── Listar
     ├── Atualizar
     └── Remover
+```
 
-💡 Observações Importantes
+---
 
-O acesso aos endpoints respeita RBAC.
-Tokens expirados ou inválidos retornam 401.
-Permissões insuficientes retornam 403.
-Toda a API é stateless.
+## 💡 Observações Importantes
 
-🔗 Links Úteis
-Prometheus: http://localhost:9090
-Grafana: http://localhost:3000 (Login: admin / admin) 
-Health Check: http://localhost:8080/actuator/health 
+* O acesso aos endpoints respeita **RBAC**.
+* Tokens expirados ou inválidos retornam `401`.
+* Permissões insuficientes retornam `403`.
+* Toda a API é **stateless**.
 
-👨‍💻 Autor Desenvolvido por Wender Gustavo.
+### 🔗 Links Úteis
+* **Prometheus:** [http://localhost:9090](http://localhost:9090)
+* **Grafana:** [http://localhost:3000](http://localhost:3000) (Login: admin / admin)
+* **Health Check:** [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+
+---
+
+### 👨‍💻 Autor
+Desenvolvido por **Wender Gustavo**.
