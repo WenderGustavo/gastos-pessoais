@@ -216,19 +216,18 @@ Se preferir usar o Postman:
 }
 ```
 
-**📂 Organização Recomendada:**
+**📂 Estrutura do Projeto:**
 ```text
 Gastos Pessoais API
-├── Auth
-│   └── Login
-├── Usuários
-│   ├── Criar Usuário
-│   └── Listar Usuários (ADMIN)
-└── Gastos
-    ├── Criar
-    ├── Listar
-    ├── Atualizar
-    └── Remover
+├── configuration # Configs de Beans
+├── controller # Camada REST 
+├── service # Regras de Negócio 
+├── repository # Persistência 
+├── model # Entidades JPA 
+├── dto # DTOs 
+├── mapper # MapStruct 
+├── validator # Validações 
+├── security # JWT e Acesso └── exception # Handler global
 ```
 
 ---
