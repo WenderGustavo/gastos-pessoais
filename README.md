@@ -174,16 +174,31 @@ Agora as rotas protegidas estarão acessíveis.
 
 ---
 
-### 🚫 Possíveis Erros Comuns
+## 📡 Códigos de Resposta HTTP
 
-| Status | Descrição |
-| :--- | :--- |
-| **401 Unauthorized** | Token ausente ou inválido |
-| **403 Forbidden** | Usuário sem permissão |
-| **400 Bad Request** | Dados inválidos |
-| **404 Not Found** | Recurso inexistente |
+A API utiliza códigos HTTP padronizados para indicar o sucesso ou falha das requisições.
 
----
+### ✅ Sucesso
+Respostas retornadas quando a operação é concluída corretamente.
+
+| Status | Descrição | Utilização |
+| :--- | :--- | :--- |
+| **200 OK** | Sucesso | Retornado em consultas (GET) e atualizações (PUT) realizadas com sucesso. |
+| **201 Created** | Criado | Retornado quando um novo recurso (Usuário ou Gasto) é criado com sucesso. |
+| **204 No Content** | Sem Conteúdo | Retornado quando um recurso é excluído com sucesso (DELETE). |
+
+### ❌ Erros
+Mapeamento de exceções tratadas pelo `GlobalExceptionHandler`.
+
+| Status | Erro | Descrição / Causa |
+| :--- | :--- | :--- |
+| **400 Bad Request** | Requisição Inválida | O corpo da requisição (JSON) está malformado, erro de sintaxe ou tipos de dados incorretos. |
+| **401 Unauthorized** | Não Autorizado | Falha na autenticação: credenciais incorretas, token JWT ausente ou inválido. |
+| **403 Forbidden** | Proibido | O usuário está autenticado, mas não tem permissão para acessar o recurso (ex: User tentando acessar rota de Admin). |
+| **404 Not Found** | Não Encontrado | O recurso solicitado (ID de Usuário ou Gasto) não existe no banco de dados. |
+| **409 Conflict** | Conflito | Tentativa de cadastro de dados duplicados (ex: E-mail já cadastrado). |
+| **422 Unprocessable Entity** | Entidade Improcessável | Erro de validação de campos (ex: campo obrigatório nulo, senha curta, data inválida). |
+| **500 Internal Server Error** | Erro Interno | Falha inesperada no servidor. |
 
 ## 📬 Utilizando a API com Postman
 
